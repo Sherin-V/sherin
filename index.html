@@ -772,6 +772,8 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.6/gsap.min.js"></script>
+
   <script>
     
     $("#submit-form").submit((e)=>{
@@ -781,7 +783,7 @@
             data:$("#submit-form").serialize(),
             method:"post",
             success:function (response){
-                alert("Form submitted successfully")
+                
                 window.location.reload()
                 //window.location.href="https://google.com"
             },
