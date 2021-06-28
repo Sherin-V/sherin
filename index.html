@@ -27,7 +27,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
 
-  
+  <link href="./assets/css/style1.css" rel="stylesheet" >
+   
   
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -681,28 +682,41 @@
 
           <div class="col-lg-8 mt-5 mt-lg-0">
 
-            <form action=""  id="submit-form" >
-              <div class="row" >
-                <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
+            <div class=container>
+                
+                <form action="" id=submit-form name=submit-form>
+                  <div class=row>
+                 <div class="col-md-6 form-group mt-3 mt-md-0">
+                  <input type="text" name="names" class="form-control" id="names"  placeholder="Your Name" required>
                 </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
-                </div>
-              </div>
+              <div class="col-md-6 form-group mt-3 mt-md-0">
+                   <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
+               </div>
+              
               <div class="form-group mt-3">
                 <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
               </div>
               <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                <textarea class="form-control" name="message" id=message rows="5" placeholder="Message" required></textarea>
               </div>
-              <div class="my-3">
+              <div class="my-3"></div>
                 
-              <div class="text-center"><button type="submit">Send Message</button></div>
+              
             </form>
-
+            <div class="form-group text-center">
+            <button  class="button" id=button>
+              <span class="default">Send</span>
+             
+                
+                 
+              <span class="success">Sent Successfuly</span>
+            
+              <div class="left"></div>
+              <div class="right"></div>
+          </button>
+        </div>
           </div>
-
+        </div>
         </div>
 
       </div>
@@ -752,7 +766,9 @@
   
 
 
-  
+    <script src="./assets/js/test1.js"></script>
+  <script src="./assets/js/script1.js"></script>  
+
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
