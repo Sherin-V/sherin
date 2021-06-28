@@ -1,4 +1,4 @@
-
+alert('sherin')
 document.querySelectorAll('.button').forEach(button => {
 
     let getVar = variable => getComputedStyle(button).getPropertyValue(variable);
