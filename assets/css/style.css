@@ -331,8 +331,8 @@ h1, h2, h3, h4, h5, h6 {
 #hero .social-links a:nth-last-child(4):hover {
   color: #111;
 }
-#hero .social-links a:nth-last-child(2):hover {
-  color: #e80368;
+#footer .social-links a:nth-last-child(2) {
+  background: #7289d9;
 }
 
 #hero .social-links a:nth-last-child(1):hover {
@@ -1195,7 +1195,7 @@ section {
   background: #111;
 }
 #footer .social-links a:nth-last-child(2) {
-  background: #e80368;
+  background: #7289d9;
 }
 
 #footer .social-links a:nth-last-child(1) {
