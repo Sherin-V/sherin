@@ -52,14 +52,15 @@ function formValidation(oEvent) {
     const form = document.querySelector('#submit-form');
 
 
-let names = form.elements.namedItem("names");
-let email = form.elements.namedItem("email");
-let subject = form.elements.namedItem("subject");
-let message = form.elements.namedItem("message");
-names.addEventListener('input', validate);
-email.addEventListener('input', validate);
-subject.addEventListener('input', validate);
-message.addEventListener('input', validate);
+    let names = form.elements.namedItem("names");
+    let email = form.elements.namedItem("email");
+    let subject = form.elements.namedItem("subject");
+    let message = form.elements.namedItem("message");
+    const emailText = document.querySelector('.mailtext');
+    names.addEventListener('input', validate);
+    email.addEventListener('input', validate);
+    subject.addEventListener('input', validate);
+    message.addEventListener('input', validate);
 
 form.addEventListener('submit', function (e) {
  e.preventDefault();
@@ -67,15 +68,18 @@ form.addEventListener('submit', function (e) {
  
 });
 
-function validate (e) {
- if (e.target.name == "email") {
-  if (pass_reg.test(e.target.value)) {
-   e.target.classList.add('valid');
-   e.target.classList.remove('invalid');
-  } else {
-   e.target.classList.add('invalid');
-   e.target.classList.remove('valid');
-  }
+    function validate (e) {
+    if (e.target.name == "email") {
+     if (pass_reg.test(e.target.value)) {
+      e.target.classList.add('valid');
+      e.target.classList.remove('invalid');
+      emailText.innerHTML = "Valid Email ";
+       
+     } else {
+      e.target.classList.add('invalid');
+      e.target.classList.remove('valid');
+      emailText.innerHTML = "Must be a valid email address."; 
+     }
  }
  
  if (e.target.name == "names") {
