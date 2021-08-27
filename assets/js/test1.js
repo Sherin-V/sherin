@@ -73,12 +73,12 @@ form.addEventListener('submit', function (e) {
      if (pass_reg.test(e.target.value)) {
       e.target.classList.add('valid');
       e.target.classList.remove('invalid');
-      emailText.innerHTML = "Valid Email ";
+      emailText.innerHTML = "Valid Email id. ";
        
      } else {
       e.target.classList.add('invalid');
       e.target.classList.remove('valid');
-      emailText.innerHTML = "Must be a valid email address."; 
+      emailText.innerHTML = "Must be a valid email id."; 
      }
  }
  
