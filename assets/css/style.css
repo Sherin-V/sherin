@@ -345,6 +345,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 992px) {
   #hero {
     text-align: center;
+    background-position-x: center;
+    background-position-y: center;
   }
   #hero h1 {
     font-size: 32px;
@@ -356,7 +358,6 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 24px;
   }
 }
-
 /*--------------------------------------------------------------
 # Sections General
 --------------------------------------------------------------*/
