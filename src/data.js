@@ -7,13 +7,23 @@ export const socials = [
 
 export const skills = ['React', 'JavaScript', 'HTML & CSS', 'Java', 'SQL', 'Firebase', 'UI/UX design']
 
+// Projects shown as game cartridges. PLACEHOLDERS: replace with real projects.
+// image: a screenshot in public/assets (e.g. '/assets/project-a.png'), or null for "coming soon".
+// live / code: full URLs, or '' to hide that button.
+export const projects = [
+  { title: 'Project A', color: '#ff5a36', blurb: 'One line about what it is and who it was for.', tech: ['React', 'Firebase'], image: null, live: '', code: '' },
+  { title: 'Project B', color: '#3d5afe', blurb: 'One line about what it is and who it was for.', tech: ['HTML', 'CSS', 'JavaScript'], image: null, live: '', code: '' },
+  { title: 'Project C', color: '#ffc531', blurb: 'One line about what it is and who it was for.', tech: ['Java', 'SQL'], image: null, live: '', code: '' },
+]
+
+// Services as sticky notes: `note` is the paper colour, `tags` the handwritten line at the bottom
 export const services = [
-  { title: 'Web apps', icon: '⚛', color: '#3d5afe', text: 'Modern React applications, built to grow with your users.' },
-  { title: 'UI/UX design', icon: '✦', color: '#ff5a36', text: 'Clean, animated interfaces for websites and apps.' },
-  { title: 'Databases', icon: '◈', color: '#3d5afe', text: 'Data models and databases designed around your application.' },
-  { title: 'Websites', icon: '◐', color: '#ffc531', text: 'Distinctive static sites that load fast and look sharp.' },
-  { title: 'E-commerce', icon: '◎', color: '#f2ede4', text: 'Fully working online shops, from catalogue to checkout.' },
-  { title: 'Hosting', icon: '☁', color: '#ff5a36', text: 'Low-cost hosting so your site stays online without the hassle.' },
+  { title: 'Web apps', note: '#ffc531', tags: 'React · Firebase', text: 'Fast React apps that grow with your users. Prototype to launch, front end to database.' },
+  { title: 'UI/UX design', note: '#f2ede4', tags: 'wireframes · animation', text: 'Interfaces that feel good to use. We sketch it together first, then I make it move.' },
+  { title: 'Databases', note: '#ff8a6b', tags: 'SQL · Firebase', text: 'Data models designed around how your app actually works, kept clean and safe.' },
+  { title: 'Websites', note: '#a9b6ff', tags: 'custom design · fast', text: 'Distinctive sites that load fast and look sharp, designed around your idea.' },
+  { title: 'E-commerce', note: '#ffc531', tags: 'catalogue · checkout', text: 'Online shops that work end to end, from the product catalogue to the checkout.' },
+  { title: 'Hosting', note: '#f2ede4', tags: 'domain · deploys', text: 'Low-cost hosting and domain set up, so your site stays online without the hassle.' },
 ]
 
 export const journey = [
