@@ -8,7 +8,7 @@ import { useTheme } from './theme.js'
 // No physics and no touch handling, so it is light and never gets in the way of scrolling.
 // It only redraws when something changes (frameloop "demand").
 const COLORS = ['#141312', '#ff5a36', '#3d5afe', '#ffc531', '#f2ede4', '#ff5a36', '#3d5afe']
-const FONT = '/fonts/bricolage-800.woff'
+const FONT = `${import.meta.env.BASE_URL}fonts/bricolage-800.woff`
 const H = 0.5 // brick height
 const ORDER = [...skills].sort((a, b) => b.length - a.length) // widest at the bottom
 const BASE_Y = -(ORDER.length * H) / 2 - 0.1

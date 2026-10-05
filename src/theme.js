@@ -22,7 +22,7 @@ export function setTheme(theme, x = innerWidth / 2, y = 0) {
       { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
       { duration: 650, easing: 'cubic-bezier(.22,1,.36,1)', pseudoElement: '::view-transition-new(root)' },
     )
-  })
+  }).catch(() => {}) // a quick second click skips the animation; the theme still switches
 }
 
 export function useTheme() {

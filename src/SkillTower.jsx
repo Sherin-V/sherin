@@ -10,7 +10,7 @@ import { useTheme } from './theme.js'
 // A wobbly tower of skill bricks on a little base, standing on the ground (real physics).
 // Bricks can be picked up, pulled out and thrown; knock it over and stack it back up by hand.
 const COLORS = ['#141312', '#ff5a36', '#3d5afe', '#ffc531', '#f2ede4', '#ff5a36', '#3d5afe']
-const FONT = '/fonts/bricolage-800.woff'
+const FONT = `${import.meta.env.BASE_URL}fonts/bricolage-800.woff`
 const DROP_EVERY = 0.38 // seconds between bricks while building
 const rand = THREE.MathUtils.randFloatSpread
 

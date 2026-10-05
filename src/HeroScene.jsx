@@ -130,7 +130,7 @@ function Blocks() {
               <RoundedBox args={[1.3, 1.3, 1.3]} radius={0.16} smoothness={6} castShadow>
                 <meshStandardMaterial color={color} roughness={0.35} />
               </RoundedBox>
-              <Text font="/fonts/bricolage-800.woff" fontSize={0.95} position={[0, -0.04, 0.66]}
+              <Text font={`${import.meta.env.BASE_URL}fonts/bricolage-800.woff`} fontSize={0.95} position={[0, -0.04, 0.66]}
                 color={color === '#ffc531' ? '#141312' : '#f2ede4'} anchorX="center" anchorY="middle">
                 {l}
               </Text>

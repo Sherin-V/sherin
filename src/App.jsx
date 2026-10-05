@@ -317,7 +317,7 @@ function Hero() {
         </motion.p>
         <motion.div className="cta" {...up(1.55)}>
           <a className="btn primary" href="#contact">Start a project</a>
-          <a className="btn line-btn" href="/assets/SherinV.pdf" target="_blank" rel="noopener">CV ↓</a>
+          <a className="btn line-btn" href={`${import.meta.env.BASE_URL}assets/SherinV.pdf`} target="_blank" rel="noopener">CV ↓</a>
         </motion.div>
       </div>
     </section>

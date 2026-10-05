@@ -15,7 +15,7 @@ import { isPhone } from './usePhone.js'
 // Once it has landed, live physics takes over: the shelves tilt toward the mouse, blocks
 // slide, and any that slide off the end fall away for good.
 const COLORS = ['#ff5a36', '#3d5afe', '#ffc531', '#141312']
-const FONT = '/fonts/bricolage-800.woff'
+const FONT = `${import.meta.env.BASE_URL}fonts/bricolage-800.woff`
 const SHELF_DEPTH = 2.3
 const MAX_TILT = 0.34 // radians, about 20 degrees
 const GRAVITY = 24
