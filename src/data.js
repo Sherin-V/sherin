@@ -28,10 +28,17 @@ export const services = [
 
 export const journey = [
   {
-    when: '2022 – now',
+    when: 'Now',
+    title: 'Junior Software Engineer',
+    where: 'Macrix',
+    color: '#e2231a', // Macrix red
+    text: 'Building software full-time.',
+  },
+  {
+    when: 'Graduated',
     title: 'MSc Computer Science',
     where: 'IU International University of Applied Sciences',
-    text: 'Dual studies, combining university with hands-on work.',
+    text: 'Completed. Dual studies, combining university with hands-on work.',
   },
   {
     when: '2022',

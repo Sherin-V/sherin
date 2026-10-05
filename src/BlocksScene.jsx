@@ -7,6 +7,7 @@ import { livePointer } from './livePointer.js'
 import drops from './assets/block-drops.json'
 import { blockLayout, CAMERA_Z, FOV, SHELF_BACK, SHELF_RISE } from './blockLayout.js'
 import { useTheme } from './theme.js'
+import { isPhone } from './usePhone.js'
 
 // Each word falls onto its own toy shelf. The fall is real rigid-body physics
 // (gravity, bounces, friction, no steering), simulated ahead of time; from many random
@@ -160,6 +161,8 @@ function Toybox() {
   const z = useMemo(() => new THREE.Vector3(0, 0, 1), [])
 
   useEffect(() => {
+    // The blocks are on screen: the page can drop its plain-text name
+    window.dispatchEvent(new Event('blocks:ready'))
     physicsReady.then(() => { ready.current = true })
     // Switching theme bumps the shelves: every block gives a small hop
     const hop = () => {
@@ -218,8 +221,8 @@ function Toybox() {
 export default function BlocksScene() {
   return (
     <Canvas
-      shadows
-      dpr={[1, 1.75]}
+      shadows={!isPhone()} // real-time shadows are costly on phones
+      dpr={isPhone() ? [1, 1.5] : [1, 1.75]}
       camera={{ position: [0, 0, CAMERA_Z], fov: FOV }}
       eventSource={document.getElementById('root')}
       eventPrefix="client"

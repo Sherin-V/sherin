@@ -48,7 +48,7 @@ export default function ClawMachine() {
   const capsules = useMemo(() => journey.map((j, i) => {
     const usable = width - CAPSULE - CHUTE_W - 40
     const step = journey.length > 1 ? usable / (journey.length - 1) : 0
-    return { ...j, i, num: i + 1, color: COLORS[i % COLORS.length], x: 18 + i * step, lift: (i % 2) * 18, tilt: ((i * 37) % 36) - 18 }
+    return { ...j, i, num: i + 1, color: j.color ?? COLORS[i % COLORS.length], x: 18 + i * step, lift: (i % 2) * 18, tilt: ((i * 37) % 36) - 18 }
   }), [width])
 
   // Decorative capsules behind them so the machine looks full (not grabbable): two even rows

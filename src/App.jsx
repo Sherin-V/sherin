@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { socials, services } from './data.js'
 import { wordAnchorsPx } from './blockLayout.js'
 import ClawMachine from './ClawMachine.jsx'
 import WalkieContact from './WalkieContact.jsx'
 import ProjectConsole from './ProjectConsole.jsx'
 import { setTheme, TONES, useTheme } from './theme.js'
+import DeskTour from './DeskTour.jsx'
 
 const BlocksScene = lazy(() => import('./BlocksScene.jsx'))
-const SkillTower = lazy(() => import('./SkillTower.jsx'))
 
 const rise = {
   hidden: { opacity: 0, y: 40 },
@@ -24,18 +24,31 @@ function Reveal({ i = 0, className, children, as = 'div' }) {
   )
 }
 
+const NAV_LINKS = [['#about', 'About'], ['#projects', 'Projects'], ['#services', 'Services'], ['#journey', 'Journey']]
+
 function Nav() {
+  const [open, setOpen] = useState(false) // phone menu
   return (
     <motion.header className="nav" initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
-      <a className="brand" href="#top">sherin<span>.fun</span></a>
+      <a className="brand" href="#top" aria-label="sherin.fun, back to top">
+        sherin<i className="brand-dot" aria-hidden="true">.</i>
+        <span className="brand-blocks" aria-hidden="true">{['f', 'u', 'n'].map((c) => <b key={c}>{c}</b>)}</span>
+      </a>
       <nav className="links" aria-label="Main">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#services">Services</a>
-        <a href="#journey">Journey</a>
+        {NAV_LINKS.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
       </nav>
       <ThemeToggle />
       <a className="pill" href="#contact">Let's talk</a>
+      <button type="button" className="menu-btn" aria-expanded={open} aria-controls="phone-menu" onClick={() => setOpen((o) => !o)}>
+        {open ? 'Close' : 'Menu'}
+      </button>
+      {open && (
+        <nav className="phone-menu" id="phone-menu" aria-label="Sections">
+          {[...NAV_LINKS, ['#contact', 'Contact']].map(([href, label]) => (
+            <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+          ))}
+        </nav>
+      )}
     </motion.header>
   )
 }
@@ -60,13 +73,15 @@ function HandNotes() {
   useEffect(() => {
     // Measure the 3D layer itself (it is full-bleed, like this notes layer)
     const stage = ref.current.parentElement.querySelector('.hero-3d')
-    const measure = () => setAt(wordAnchorsPx(stage.clientWidth, stage.clientHeight))
+    const measure = () => setAt({ ...wordAnchorsPx(stage.clientWidth, stage.clientHeight), width: stage.clientWidth })
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(stage)
     return () => ro.disconnect()
   }, [])
 
+  // Keep each note inside the screen (phones are narrow)
+  const inside = (x, w) => Math.max(10, Math.min(x, (at?.width ?? 9999) - w - 10))
   const draw = (delay) => ({ initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { delay, duration: 0.5, ease: 'easeOut' } })
   const pop = (delay, rotate) => ({ initial: { opacity: 0, y: 8, rotate }, animate: { opacity: 1, y: 0, rotate }, transition: { delay, duration: 0.45, ease } })
 
@@ -74,7 +89,7 @@ function HandNotes() {
     <div className="notes" ref={ref} aria-hidden="true">
       {at && (
         <>
-          <motion.div className="note note-blue" style={{ left: at.top.right.x + at.blockPx * 0.5, top: at.top.right.y - at.blockPx * 1.55 }} {...pop(2.4, -5)}>
+          <motion.div className="note note-blue" style={{ left: inside(at.top.right.x + at.blockPx * 0.5, 110), top: at.top.right.y - at.blockPx * 1.55 }} {...pop(2.4, -5)}>
             that's me!
             <svg width="54" height="40" viewBox="0 0 54 40" className="note-arrow" style={{ left: -38, top: 18 }}>
               <motion.path d="M50 4 C32 4 18 14 8 32" {...draw(2.6)} />
@@ -82,7 +97,7 @@ function HandNotes() {
             </svg>
           </motion.div>
 
-          <motion.div className="note note-red" style={{ left: at.bottom.left.x - at.blockPx * 0.3, top: at.bottom.left.y + at.blockPx * 0.95 }} {...pop(2.8, 3)}>
+          <motion.div className="note note-red" style={{ left: inside(at.bottom.left.x - at.blockPx * 0.3, 130), top: at.bottom.left.y + at.blockPx * 0.95 }} {...pop(2.8, 3)}>
             made in Berlin
             <svg width="50" height="34" viewBox="0 0 50 34" className="note-arrow" style={{ left: 18, top: -36 }}>
               <motion.path d="M4 30 C10 20 18 12 30 6" {...draw(3)} />
@@ -206,7 +221,8 @@ function ThrowableSun() {
       }
       el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${s.x * 0.6}deg)`
       // The note sits on the ground beside the spot where the sun first lands
-      hint.style.transform = `translate(${W * 0.78 + BALL + 10}px, ${floor + BALL - 30}px) rotate(-4deg)`
+      const hx = W < 600 ? W * 0.78 - 92 : W * 0.78 + BALL + 10 // left of the sun on phones, right of it on wide screens
+      hint.style.transform = `translate(${hx}px, ${floor + BALL - 30}px) rotate(-4deg)`
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -273,11 +289,19 @@ function ThrowableSun() {
 }
 
 function Hero() {
+  // Until the 3D blocks are ready, show the name as plain type so the hero is never blank
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const on = () => setReady(true)
+    window.addEventListener('blocks:ready', on)
+    return () => window.removeEventListener('blocks:ready', on)
+  }, [])
   return (
     <section className="hero" id="top">
       <div className="hero-3d" aria-hidden="true">
         <Suspense fallback={null}><BlocksScene /></Suspense>
       </div>
+      <p className={`hero-fallback ${ready ? 'gone' : ''}`} aria-hidden="true"><span>SHERIN</span><span>VARGHESE</span></p>
       <h1 className="sr-only">Sherin Varghese — software developer in Berlin</h1>
       <motion.div className="hero-top" {...up(0.2)}>
         <span>Software developer</span>
@@ -300,47 +324,20 @@ function Hero() {
   )
 }
 
-// Handwritten notes beside the tower; they change as it falls and gets rebuilt
-const TOWER_NOTES = {
-  standing: ['go on,', 'pull one out →', 'grab any brick'],
-  toppled: ['oops!', 'pick them up →', 'drag the bricks to rebuild the tower'],
-  rebuilt: ['nice', 'stacking! ✓', 'now try not to knock it over'],
-}
-
 function About() {
-  const ref = useRef(null)
-  // The tower only starts building once you scroll here
-  const seen = useInView(ref, { once: true, amount: 0.3 })
-  const [state, setState] = useState('standing')
-  const [first, second, hint] = TOWER_NOTES[state]
   return (
-    <section className="section about-section" id="about" ref={ref}>
-      {/* The bricks live across the whole section, behind the text */}
-      <div className="about-3d" aria-hidden="true">
-        {seen && <Suspense fallback={null}><SkillTower onState={setState} /></Suspense>}
-      </div>
+    <section className="section about-section" id="about">
       <Reveal className="kicker">01 — About</Reveal>
-      <div className="about">
-        <div className="about-text">
-          <Reveal as="h2" className="title">Coding since 17.<br /><span className="grad">Still having fun.</span></Reveal>
-          <Reveal i={1} as="p" className="body">I'm studying for a master's in computer science while building web applications — and I care as much about how a product feels as how it works.</Reveal>
-          <Reveal i={2} as="p" className="body">Away from the keyboard you'll find me exploring new places, trying new recipes or deep in a good book.</Reveal>
-          <Reveal i={3} className="links-row">
+      <Reveal i={1}>
+        <DeskTour>
+          <h2 className="title">Coding since 17.<br /><span className="grad">Still having fun.</span></h2>
+          <p className="body">I've finished my master's in computer science and now build software at Macrix — and I care as much about how a product feels as how it works.</p>
+          <p className="body">Away from the keyboard you'll find me exploring new places, trying new recipes or deep in a good book.</p>
+          <div className="links-row">
             {socials.map((s) => <a key={s.label} href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
-          </Reveal>
-          <Reveal i={4} className="polaroid-row">
-            <figure className="polaroid">
-              <img src="/assets/sv.jpeg" alt="Sherin Varghese sitting on a stone bench in a Berlin park in autumn" draggable="false" />
-              <span className="tape" aria-hidden="true" />
-            </figure>
-            <span className="polaroid-note">← hi, that's me</span>
-          </Reveal>
-        </div>
-        <div className="crate" aria-hidden="true">
-          <motion.span className="crate-note" key={state} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>{first}<br />{second}</motion.span>
-          <span className="crate-hint">{hint}</span>
-        </div>
-      </div>
+          </div>
+        </DeskTour>
+      </Reveal>
     </section>
   )
 }
