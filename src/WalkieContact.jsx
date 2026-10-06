@@ -8,9 +8,9 @@ const HOLD_MS = 800
 const okEmail = (v) => /^\S+@\S+\.\S+$/.test(v)
 
 export default function WalkieContact({ children }) {
-  const [fields, setFields] = useState({ names: '', email: '', message: '' })
+  const [fields, setFields] = useState({ names: '', email: '', message: '', website: '' })
   const [error, setError] = useState('')
-  const [phase, setPhase] = useState('idle') // idle | talking | sending | sent | failed
+  const [phase, setPhase] = useState('idle') // idle | talking | sending | sent | failed | busy
   const [held, setHeld] = useState(0) // 0..1 how long the button has been held
   const hold = useRef({ on: false, start: 0, raf: 0 })
   const fieldsRef = useRef(fields)
@@ -26,12 +26,14 @@ export default function WalkieContact({ children }) {
     return ''
   }
 
+  // The script answers { ok: true } or { ok: false, error }, so the walkie shows what really happened
   const send = async () => {
     setPhase('sending')
     try {
-      const body = new URLSearchParams({ ...fieldsRef.current, subject: 'Walkie-talkie message from sherin.fun' })
-      await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body })
-      setPhase('sent')
+      const body = new URLSearchParams({ ...fieldsRef.current, page: location.href, subject: 'Walkie-talkie message from sherin.fun' })
+      const res = await fetch(FORM_URL, { method: 'POST', body })
+      const answer = await res.json().catch(() => ({ ok: res.ok }))
+      setPhase(answer.ok ? 'sent' : answer.error === 'too-many' ? 'busy' : 'failed')
     } catch {
       setPhase('failed')
     }
@@ -68,7 +70,7 @@ export default function WalkieContact({ children }) {
   const onKeyUp = (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); stop() } }
   useEffect(() => () => { cancelAnimationFrame(hold.current.raf); stopStatic() }, [])
 
-  const again = () => { setFields({ names: '', email: '', message: '' }); setPhase('idle'); setError('') }
+  const again = () => { setFields({ names: '', email: '', message: '', website: '' }); setPhase('idle'); setError('') }
   const talking = phase === 'talking'
   const locked = phase === 'sending' || phase === 'sent'
 
@@ -78,6 +80,7 @@ export default function WalkieContact({ children }) {
     sending: 'KSHHH… SENDING',
     sent: '…OVER AND OUT ✓',
     failed: 'NO SIGNAL — EMAIL ME DIRECTLY',
+    busy: 'CHANNEL BUSY — TRY AGAIN SOON',
   }[phase]
 
   return (
@@ -107,6 +110,8 @@ export default function WalkieContact({ children }) {
             <span>MESSAGE</span>
             <textarea name="message" rows="3" value={fields.message} onChange={set('message')} disabled={locked} placeholder="what should we build?" />
           </label>
+          {/* Spam trap: hidden from people, but bots fill in every field they find */}
+          <input className="walkie-trap" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={fields.website} onChange={set('website')} />
           <p className={`walkie-status ${error && phase === 'idle' ? 'warn' : ''}`} role="status" aria-live="polite">{status}</p>
         </form>
 

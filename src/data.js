@@ -101,6 +101,6 @@ export const VARIANTS = [
   { id: 'gold', name: 'Gold sculpture', bg: '#1b140d', ink: '#f6ead6', accent: '#e8b04a' },
 ]
 
-// Same Google Apps Script the old site posts its contact form to
+// Google Apps Script web app that saves each message to a Sheet and emails it (apps-script/contact.gs)
 export const FORM_URL =
-  'https://script.google.com/macros/s/AKfycbzW5Qm3DrCYUwJESqwt7ZKJaRrBaH45OOBybVfIT900271MyoU/exec'
+  'https://script.google.com/macros/s/AKfycbzFT-57fRSgkQkKWXaBQkhk0uYaUiq9ED6PH6BPuv7cS1hysZTPhJocDwByGhylJyrc9w/exec'

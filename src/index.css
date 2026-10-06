@@ -417,6 +417,7 @@ a.channel:hover { transform: translateX(6px); }
 .walkie-knob { position: absolute; left: 54px; top: -20px; width: 44px; height: 26px; border-radius: 10px 10px 0 0; background: #141312; }
 .walkie-knob i { position: absolute; left: 50%; top: 5px; width: 4px; height: 12px; margin-left: -2px; background: #ffc531; border-radius: 2px; }
 .walkie-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.walkie-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .walkie-led { width: 14px; height: 14px; border-radius: 50%; background: #5e3a12; box-shadow: inset 0 0 0 2px #141312; }
 .walkie-led.on { background: #ff3b1f; box-shadow: inset 0 0 0 2px #141312, 0 0 12px #ff3b1f; }
 .walkie-led.ok { background: #3ddc84; box-shadow: inset 0 0 0 2px #141312, 0 0 12px #3ddc84; }
