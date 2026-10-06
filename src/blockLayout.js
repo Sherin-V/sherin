@@ -10,8 +10,8 @@ export const FOV = 32
 
 export function blockLayout(viewW, viewH) {
   const widest = Math.max(...WORDS.map((w) => w.length)) * GAP + 0.6
-  // Narrow screens keep more margin: landed blocks sit a little off their spots
-  const fit = viewW / viewH < 1 ? 0.8 : 0.9
+  // Phones get almost the full width: the long name otherwise leaves the blocks tiny
+  const fit = viewW / viewH < 1 ? 0.92 : 0.9
   const size = Math.min(1.3, (viewW * fit) / widest, (viewH * 0.4) / (SHELF_RISE + 1.2))
   // Bottom shelf a little below the middle; the pair is centred around the hero
   const base = viewH * 0.02 - ((SHELF_RISE + 1) * size) / 2

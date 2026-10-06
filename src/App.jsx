@@ -156,7 +156,10 @@ function ThemeToggle() {
 
 // A sun you can pick up and throw. Fling it off the page and night falls (a moon drops in);
 // throw the moon away and the day comes back. Slow throws just bounce around the hero.
-const BALL = 64
+// The ball is sized to match the name blocks (a little bigger than one), so it keeps the
+// same proportions on a phone as on a wide screen.
+const BALL_MAX = 64
+const BALL_MIN = 40
 const GRAVITY_PX = 2200 // px/s²
 const ESCAPE_SPEED = 900 // px/s needed to fly through the sides
 
@@ -165,12 +168,21 @@ function ThrowableSun() {
   const layer = useRef(null)
   const ball = useRef(null)
   const hintRef = useRef(null)
-  const state = useRef({ x: 0, y: -BALL * 3, vx: 0, vy: 0, held: false, gone: false, started: false, trail: [] })
+  const state = useRef({ x: 0, y: -BALL_MAX * 3, vx: 0, vy: 0, held: false, gone: false, started: false, trail: [] })
 
   useEffect(() => {
     const s = state.current
     const el = ball.current
     const box = layer.current
+    let BALL = BALL_MAX
+    const resize = () => {
+      const { blockPx } = wordAnchorsPx(box.clientWidth, box.clientHeight)
+      BALL = Math.round(Math.min(BALL_MAX, Math.max(BALL_MIN, blockPx * 1.15)))
+      el.style.setProperty('--ball', `${BALL}px`)
+    }
+    resize()
+    const ro = new ResizeObserver(resize)
+    ro.observe(box)
     // Floor is the line under the shelves, so the sun rolls along the top of the intro row
     const floorY = () => {
       const foot = box.parentElement.querySelector('.hero-foot')
@@ -226,7 +238,7 @@ function ThrowableSun() {
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return () => { cancelAnimationFrame(raf); ro.disconnect() }
   }, [])
 
   const down = (e) => {
@@ -267,7 +279,7 @@ function ThrowableSun() {
       <div
         ref={ball}
         className={`sun-ball ${sun ? 'is-sun' : 'is-moon'}`}
-        style={{ transform: `translate(0px, ${-BALL * 3}px)` }}
+        style={{ transform: `translate(0px, ${-BALL_MAX * 3}px)` }}
         role="button"
         tabIndex={0}
         aria-label={sun ? 'Throw the sun away to switch to the dark theme' : 'Throw the moon away to switch to the light theme'}
@@ -278,12 +290,12 @@ function ThrowableSun() {
         onKeyDown={toss}
       >
         {sun ? (
-          <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         ) : (
-          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="currentColor" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="currentColor" /></svg>
         )}
       </div>
-      <span className="throw-hint" ref={hintRef} style={{ transform: `translate(0px, ${-BALL * 4}px)` }}>throw me!</span>
+      <span className="throw-hint" ref={hintRef} style={{ transform: `translate(0px, ${-BALL_MAX * 4}px)` }}>throw me!</span>
     </div>
   )
 }

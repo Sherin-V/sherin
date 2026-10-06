@@ -35,8 +35,9 @@ export function useTheme() {
   return theme
 }
 
-// Page tone from top to bottom of the page; it deepens as you scroll in both themes
+// Page tone from top to bottom of the page; it warms toward caramel as you scroll in both themes
+// (light: cream to caramel, dark: espresso to dark caramel, still dark enough for light text)
 export const TONES = {
   light: ['#f2ede4', '#e9dcc6', '#dfc8a5', '#d4b385', '#c79d66'],
-  dark: ['#2b251e', '#251f18', '#1f1913', '#19140f', '#130f0b'],
+  dark: ['#2b251e', '#33291e', '#3c2d1d', '#45311c', '#4e351b'],
 }
