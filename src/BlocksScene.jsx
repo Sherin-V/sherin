@@ -14,13 +14,18 @@ import { startTilt, tilt } from './tilt.js'
 // (gravity, bounces, friction, no steering), simulated ahead of time; from many random
 // throws only the ones that happened to land readable were kept, and one is picked per visit.
 // Once it has landed, live physics takes over: the shelves tilt toward the mouse (or with the
-// phone, when it is tilted), blocks slide, and any that slide off the end fall away for good.
+// phone, when it is tilted) and blocks slide. One that slides off the end falls away; a few
+// seconds later the letters still on that shelf hop back to their own spots, and the fallen
+// ones drop back in from the top, so the name reads again.
 const COLORS = ['#ff5a36', '#3d5afe', '#ffc531', '#141312']
 const FONT = `${import.meta.env.BASE_URL}fonts/bricolage-800.woff`
 const SHELF_DEPTH = 2.3
 const MAX_TILT = 0.34 // radians, about 20 degrees
 const GRAVITY = 24
 const STEP = 1 / 60
+const RESPAWN_AFTER = 5 // seconds before a fallen block drops back onto its shelf
+const TIDY_S = 0.6 // seconds for the letters still on the shelf to hop back to their spots
+const HOP = 0.8 // how high they hop on the way, in block sizes
 
 // The six faces as [rotation, offset] in block space (same order the simulation used)
 const FACES = [
@@ -55,6 +60,7 @@ function Block({ id, letter, color, index, run, offset, sim }) {
       // Live physics: copy the body back into this shelf's space
       const body = sim.current.bodies[id]
       if (!body) { g.visible = false; return }
+      g.visible = true // back again after dropping in from the top
       const p = body.translation()
       const r = body.rotation()
       g.position.set(p.x - offset[0], p.y - offset[1], p.z - offset[2])
@@ -116,12 +122,26 @@ function Shelf({ name, word, colorOffset, run, offset, sim }) {
   )
 }
 
+// A block's body: the same size, bounce and grip as in the recorded falls
+function addBlock(world, pos, rot) {
+  const body = world.createRigidBody(
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(pos.x, pos.y, pos.z)
+      .setRotation(rot)
+      .setCanSleep(false)
+      .setCcdEnabled(true),
+  )
+  world.createCollider(RAPIER.ColliderDesc.roundCuboid(0.37, 0.37, 0.37, 0.13).setFriction(0.28).setRestitution(0.2), body)
+  return body
+}
+
 // Build a live physics world from where every block landed
 function startLivePhysics(shelves) {
   const world = new RAPIER.World({ x: 0, y: -GRAVITY, z: 0 })
   world.timestep = STEP
   const bodies = {}
   const planks = {}
+  const homes = {} // where each block landed: a fallen one comes back here
   for (const { name, word, run, offset } of shelves) {
     const plank = world.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(...offset))
     world.createCollider(
@@ -132,22 +152,56 @@ function startLivePhysics(shelves) {
     const rest = run.frames[run.frames.length - 1]
     word.split('').forEach((_, i) => {
       const o = i * 7
-      const body = world.createRigidBody(
-        RAPIER.RigidBodyDesc.dynamic()
-          .setTranslation(rest[o] + offset[0], rest[o + 1] + offset[1], rest[o + 2] + offset[2])
-          .setRotation({ x: rest[o + 3], y: rest[o + 4], z: rest[o + 5], w: rest[o + 6] })
-          .setCanSleep(false)
-          .setCcdEnabled(true),
-      )
-      world.createCollider(RAPIER.ColliderDesc.roundCuboid(0.37, 0.37, 0.37, 0.13).setFriction(0.28).setRestitution(0.2), body)
-      bodies[`${name}-${i}`] = body
+      const home = {
+        pos: { x: rest[o] + offset[0], y: rest[o + 1] + offset[1], z: rest[o + 2] + offset[2] },
+        rot: { x: rest[o + 3], y: rest[o + 4], z: rest[o + 5], w: rest[o + 6] },
+      }
+      homes[`${name}-${i}`] = home
+      bodies[`${name}-${i}`] = addBlock(world, home.pos, home.rot)
     })
   }
-  return { world, bodies, planksBody: planks }
+  return { world, bodies, homes, gone: {}, tidy: {}, planksBody: planks }
+}
+
+// One frame of a shelf tidying up: each letter still on it hops in an arc back to where it
+// first landed (kinematic, so they pass over each other), then physics takes over again and
+// the letters that fell drop in from the top onto their own spots.
+const qTmp = new THREE.Quaternion()
+function tidyStep(s, now) {
+  for (const [shelf, job] of Object.entries(s.tidy)) {
+    const k = Math.min(1, (now - job.start) / TIDY_S)
+    const e = k * k * (3 - 2 * k) // ease in and out
+    for (const [id, from] of Object.entries(job.hop)) {
+      const body = s.bodies[id]
+      if (!body) continue
+      const home = s.homes[id]
+      body.setNextKinematicTranslation({
+        x: from.pos.x + (home.pos.x - from.pos.x) * e,
+        y: from.pos.y + (home.pos.y - from.pos.y) * e + Math.sin(Math.PI * k) * HOP,
+        z: from.pos.z + (home.pos.z - from.pos.z) * e,
+      })
+      qTmp.copy(from.rot).slerp(new THREE.Quaternion(home.rot.x, home.rot.y, home.rot.z, home.rot.w), e)
+      body.setNextKinematicRotation({ x: qTmp.x, y: qTmp.y, z: qTmp.z, w: qTmp.w })
+    }
+    if (k < 1) continue
+    for (const id of Object.keys(job.hop)) {
+      const body = s.bodies[id]
+      if (!body) continue
+      body.setBodyType(RAPIER.RigidBodyType.Dynamic, true)
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+      body.setAngvel({ x: 0, y: 0, z: 0 }, true)
+    }
+    for (const id of job.due) {
+      const { pos, rot } = s.homes[id]
+      s.bodies[id] = addBlock(s.world, { x: pos.x, y: Math.max(pos.y + 3, job.dropY), z: pos.z }, rot)
+    }
+    delete s.tidy[shelf]
+  }
 }
 
 function Toybox() {
   const { size, base } = useLayout()
+  const { viewport } = useThree()
   const [top, bottom] = drops.words
   // A different real fall on every visit
   const runs = useMemo(() => ({ top: pick(drops.runs[top]), bottom: pick(drops.runs[bottom]) }), [top, bottom])
@@ -199,18 +253,40 @@ function Toybox() {
       s.planks[name]?.quaternion.copy(q)
     }
 
+    const now = clock.elapsedTime
+    tidyStep(s, now)
+
     s.carry = Math.min(s.carry + delta, STEP * 4)
     while (s.carry >= STEP) {
       s.world.step()
       s.carry -= STEP
     }
 
-    // Blocks that slid off the end are gone for good
+    // A block that slid off the end is gone for a moment…
     for (const [id, body] of Object.entries(s.bodies)) {
       if (body.translation().y < -14) {
         s.world.removeRigidBody(body)
         delete s.bodies[id]
+        s.gone[id] = now
       }
+    }
+    // …then its shelf tidies up: the letters still there hop back to their own spots, and once
+    // they are home the fallen ones drop in from above the top of the screen
+    for (const [id, at] of Object.entries(s.gone)) {
+      const shelf = id.split('-')[0]
+      if (now - at < RESPAWN_AFTER || s.tidy[shelf]) continue
+      const due = Object.keys(s.gone).filter((g) => g.startsWith(shelf + '-') && now - s.gone[g] >= RESPAWN_AFTER)
+      due.forEach((g) => delete s.gone[g])
+      const hop = {}
+      for (const [bid, body] of Object.entries(s.bodies)) {
+        if (!bid.startsWith(shelf + '-')) continue
+        const t = body.translation()
+        const r = body.rotation()
+        hop[bid] = { pos: { x: t.x, y: t.y, z: t.z }, rot: new THREE.Quaternion(r.x, r.y, r.z, r.w) }
+        body.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true)
+      }
+      const aboveScreen = (viewport.height / 2 - base) / size + 1.5 // in block sizes, from the bottom shelf
+      s.tidy[shelf] = { start: now, hop, due, dropY: aboveScreen }
     }
   })
 
