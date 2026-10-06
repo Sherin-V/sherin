@@ -8,12 +8,13 @@ import drops from './assets/block-drops.json'
 import { blockLayout, CAMERA_Z, FOV, SHELF_BACK, SHELF_RISE } from './blockLayout.js'
 import { useTheme } from './theme.js'
 import { isPhone } from './usePhone.js'
+import { startTilt, tilt } from './tilt.js'
 
 // Each word falls onto its own toy shelf. The fall is real rigid-body physics
 // (gravity, bounces, friction, no steering), simulated ahead of time; from many random
 // throws only the ones that happened to land readable were kept, and one is picked per visit.
-// Once it has landed, live physics takes over: the shelves tilt toward the mouse, blocks
-// slide, and any that slide off the end fall away for good.
+// Once it has landed, live physics takes over: the shelves tilt toward the mouse (or with the
+// phone, when it is tilted), blocks slide, and any that slide off the end fall away for good.
 const COLORS = ['#ff5a36', '#3d5afe', '#ffc531', '#141312']
 const FONT = `${import.meta.env.BASE_URL}fonts/bricolage-800.woff`
 const SHELF_DEPTH = 2.3
@@ -163,6 +164,7 @@ function Toybox() {
   useEffect(() => {
     // The blocks are on screen: the page can drop its plain-text name
     window.dispatchEvent(new Event('blocks:ready'))
+    startTilt()
     physicsReady.then(() => { ready.current = true })
     // Switching theme bumps the shelves: every block gives a small hop
     const hop = () => {
@@ -186,9 +188,10 @@ function Toybox() {
       Object.assign(s, startLivePhysics(shelves))
     }
 
-    // Lean the shelves toward the mouse while it is over the hero; level out otherwise
+    // Lean the shelves toward the mouse while it is over the hero; level out otherwise.
+    // On a phone with a motion sensor the shelves follow the phone's own tilt instead.
     const over = Math.abs(pointer.x) <= 1 && Math.abs(pointer.y) <= 1
-    const target = over ? -pointer.x * MAX_TILT : 0
+    const target = tilt.active ? -tilt.x * MAX_TILT : over ? -pointer.x * MAX_TILT : 0
     s.tilt = THREE.MathUtils.damp(s.tilt, target, 4, delta)
     q.setFromAxisAngle(z, s.tilt)
     for (const { name } of shelves) {

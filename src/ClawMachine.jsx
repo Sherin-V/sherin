@@ -1,10 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { journey } from './data.js'
+import { tilt, useTiltActive } from './tilt.js'
 
 // The Journey as an arcade claw machine: each milestone is a capsule in the pile. Move the claw,
 // press DROP, and if it holds on, the capsule goes down the chute and prints a prize ticket.
 // Sometimes it just slips.
+// Capsule and chute sizes; a narrow machine (phones) gets smaller ones so all five fit side by side
 const CAPSULE = 62
+const CAPSULE_SMALL = 50
+const CHUTE_SMALL = 44
+const NARROW = 440 // glass width below which the small sizes are used
+// Where a capsule hangs in the claw, relative to the claw's x and the top of the glass
+// (arm top 12 + carriage 20 + raised cord 24, then the capsule sits 34 below the claw head)
+const IN_CLAW_X = -31
+const IN_CLAW_Y = 90
+const FALL_MS = 650
 const COLORS = ['#ff5a36', '#3d5afe', '#ffc531', '#141312', '#a9b6ff', '#ff8a6b']
 const FILLER = ['#ffc531', '#a9b6ff', '#ff8a6b', '#3d5afe', '#ff5a36', '#f2ede4', '#141312']
 const GRIP = 0.7 // chance the claw holds on when it is right above a capsule
@@ -14,6 +24,8 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const MESSAGES = {
   idle: 'move the claw, then press DROP',
+  idleTouch: 'tap a capsule, then DROP',
+  idleTilt: 'tilt to aim, then DROP',
   dropping: 'here it goes…',
   miss: 'oops, you missed it — try again!',
   slip: 'oops, it slipped! try again!',
@@ -30,11 +42,13 @@ export default function ClawMachine() {
   const [closed, setClosed] = useState(false)
   const [busy, setBusy] = useState(false)
   const [held, setHeld] = useState(null)
+  const [falling, setFalling] = useState(null) // capsule dropping from the open claw into the prize hole
   const [wobble, setWobble] = useState(null)
   const [won, setWon] = useState([])
   const [latest, setLatest] = useState(null)
   const [msg, setMsg] = useState('idle')
   const [showList, setShowList] = useState(false)
+  const tiltOn = useTiltActive() // phone with a motion sensor: tilting steers the claw
   const [steering, setSteering] = useState(false) // joystick in hand: claw follows it directly, no glide
 
   useEffect(() => {
@@ -44,30 +58,34 @@ export default function ClawMachine() {
     return () => ro.disconnect()
   }, [])
 
+  const small = width < NARROW
+  const cap = small ? CAPSULE_SMALL : CAPSULE
+  const chuteW = small ? CHUTE_SMALL : CHUTE_W
+
   // Milestone capsules sit along the front of the pile, spread across the floor
   const capsules = useMemo(() => journey.map((j, i) => {
-    const usable = width - CAPSULE - CHUTE_W - 40
+    const usable = width - cap - chuteW - (small ? 24 : 40)
     const step = journey.length > 1 ? usable / (journey.length - 1) : 0
-    return { ...j, i, num: i + 1, color: j.color ?? COLORS[i % COLORS.length], x: 18 + i * step, lift: (i % 2) * 18, tilt: ((i * 37) % 36) - 18 }
-  }), [width])
+    return { ...j, i, num: i + 1, color: j.color ?? COLORS[i % COLORS.length], x: (small ? 12 : 18) + i * step, lift: (i % 2) * (small ? 14 : 18), tilt: ((i * 37) % 36) - 18 }
+  }), [width, cap, chuteW, small])
 
   // Decorative capsules behind them so the machine looks full (not grabbable): two even rows
   const filler = useMemo(() => {
     const out = []
-    const span = width - CHUTE_W - 24
+    const span = width - chuteW - 24
     for (let row = 0; row < 2; row++) {
-      const size = row ? 46 : 52
+      const size = small ? (row ? 36 : 42) : (row ? 46 : 52)
       const n = Math.max(1, Math.floor(span / (size + 4)))
       const step = span / n
       for (let j = 0; j < n; j++) {
         const k = row * 31 + j
-        out.push({ x: 8 + j * step + (row ? step / 2 : 0) - (row ? size / 2 : 0), b: row ? 40 : 4, size, color: FILLER[(k * 3) % FILLER.length], tilt: (k * 47) % 360 })
+        out.push({ x: 8 + j * step + (row ? step / 2 : 0) - (row ? size / 2 : 0), b: row ? (small ? 32 : 40) : 4, size, color: FILLER[(k * 3) % FILLER.length], tilt: (k * 47) % 360 })
       }
     }
     return out.filter((f) => f.x > 2 && f.x + f.size < span + 10)
-  }, [width])
+  }, [width, chuteW, small])
 
-  const chuteX = width - CHUTE_W - 6
+  const chuteX = width - chuteW - 6
   const clamp = (x) => Math.min(Math.max(x, 26), chuteX - 10)
 
   const moveTo = (x) => {
@@ -76,7 +94,7 @@ export default function ClawMachine() {
     setClawX(nx)
   }
   useEffect(() => {
-    if (stick.current.held) return
+    if (stick.current.held || tilt.active) return
     const t = setTimeout(() => setLean(0), 220)
     return () => clearTimeout(t)
   }, [clawX])
@@ -84,6 +102,7 @@ export default function ClawMachine() {
   // The joystick: push the ball left or right and the claw slides that way, faster the further
   // you push. Let go and it springs back to the middle.
   const stick = useRef({ held: false, v: 0, cx: 0 })
+  const leanShown = useRef(0)
   const stickMove = (e) => {
     const st = stick.current
     if (!st.held) return
@@ -104,7 +123,7 @@ export default function ClawMachine() {
   // Aim assist: on letting go, glide onto the nearest capsule if it's close
   const nearest = (x, within) => capsules
     .filter((c) => !won.includes(c.i))
-    .map((c) => ({ x: c.x + CAPSULE / 2, d: Math.abs(c.x + CAPSULE / 2 - x) }))
+    .map((c) => ({ x: c.x + cap / 2, d: Math.abs(c.x + cap / 2 - x) }))
     .filter((c) => c.d < within)
     .sort((a, b) => a.d - b.d)[0]
   const stickUp = () => {
@@ -124,6 +143,13 @@ export default function ClawMachine() {
       prev = now
       const { held, v } = stick.current
       if (held && v && !busy) setClawX((x) => clamp(x + v * dt))
+      else if (!held && tilt.active && small && !busy) {
+        // Phone tilt steers the claw like the joystick: gentle near level, faster when tilted far
+        const tx = tilt.x
+        if (tx) setClawX((x) => clamp(x + Math.sign(tx) * Math.pow(Math.abs(tx), 1.6) * 220 * dt))
+        const lean = Math.round(tx * 34)
+        if (Math.abs(lean - leanShown.current) >= 2) { leanShown.current = lean; setLean(lean) }
+      }
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -147,7 +173,7 @@ export default function ClawMachine() {
 
     const left = capsules.filter((c) => !won.includes(c.i))
     const under = left.reduce((best, c) => {
-      const d = Math.abs(c.x + CAPSULE / 2 - clawX)
+      const d = Math.abs(c.x + cap / 2 - clawX)
       return d < REACH && (!best || d < best.d) ? { c, d } : best
     }, null)
     const holds = under && Math.random() < GRIP
@@ -156,16 +182,22 @@ export default function ClawMachine() {
       setHeld(under.c.i)
       setDrop(false)
       await wait(720)
-      setClawX(chuteX + CHUTE_W / 2 - 4)
+      // Line the hanging capsule's centre up with the middle of the hole
+      const overHole = chuteX + chuteW / 2 - IN_CLAW_X - cap / 2
+      setClawX(overHole)
       await wait(650)
+      // The claw opens: the capsule falls from where it hung, down into the prize hole
       setClosed(false)
       setHeld(null)
+      setFalling({ c: under.c, x: overHole + IN_CLAW_X, drop: glass.current.clientHeight - IN_CLAW_Y + 10 })
+      await wait(FALL_MS)
+      setFalling(null)
       const nextWon = [...won, under.c.i]
       setWon(nextWon)
       setLatest(under.c.i)
       setMsg(nextWon.length === capsules.length ? 'done' : 'win')
       await wait(300)
-      setClawX((x) => clamp(x - CHUTE_W))
+      setClawX((x) => clamp(x - chuteW))
     } else {
       if (under) setWobble(under.c.i)
       setDrop(false)
@@ -189,7 +221,7 @@ export default function ClawMachine() {
   const oops = msg === 'miss' || msg === 'slip'
 
   return (
-    <div className="claw">
+    <div className={`claw ${small ? 'is-small' : ''} ${small && tiltOn ? 'has-tilt' : ''}`} style={{ '--cap': `${cap}px` }}>
       <div className="cabinet">
         <div className="marquee">
           <span className="bulbs" aria-hidden="true" />
@@ -208,7 +240,7 @@ export default function ClawMachine() {
           onKeyDown={onKey}
         >
           <div className="claw-rail" />
-          <div className={`claw-arm ${steering ? 'steer' : ''}`} style={{ transform: `translateX(${clawX}px)` }}>
+          <div className={`claw-arm ${steering || (small && tiltOn && !busy) ? 'steer' : ''}`} style={{ transform: `translateX(${clawX}px)` }}>
             <div className="carriage" />
             <div className={`claw-cord ${drop ? 'down' : ''}`} />
             <div className={`claw-head ${closed ? 'closed' : ''}`}>
@@ -222,10 +254,13 @@ export default function ClawMachine() {
               <span key={k} className="filler" style={{ left: f.x, bottom: f.b, width: f.size, height: f.size, '--c': f.color, transform: `rotate(${f.tilt}deg)` }} />
             ))}
           </div>
-          {capsules.map((c) => (won.includes(c.i) || held === c.i ? null : (
+          {falling && (
+            <Capsule c={falling.c} className="falling" style={{ left: falling.x, top: IN_CLAW_Y, '--drop': `${falling.drop}px`, '--fall': `${FALL_MS}ms` }} />
+          )}
+          {capsules.map((c) => (won.includes(c.i) || held === c.i || falling?.c.i === c.i ? null : (
             <Capsule key={c.i} c={c} className={wobble === c.i ? 'wobble' : ''} style={{ left: c.x, bottom: 18 + c.lift, '--tilt': `${c.tilt}deg` }} />
           )))}
-          <div className="claw-chute" style={{ left: chuteX }} aria-hidden="true"><span>PRIZES</span></div>
+          <div className="claw-chute" style={{ left: chuteX, width: chuteW }} aria-hidden="true"><span>PRIZES</span></div>
           <div className="glass-shine" aria-hidden="true" />
         </div>
 
@@ -245,7 +280,7 @@ export default function ClawMachine() {
           >
             <span className={`stick ${stick.current.held ? 'held' : ''}`} style={{ transform: `rotate(${lean}deg)` }} />
           </div>
-          <div className={`screen ${oops ? 'oops' : ''}`} aria-live="polite">{MESSAGES[msg]}</div>
+          <div className={`screen ${oops ? 'oops' : ''}`} aria-live="polite">{MESSAGES[msg === 'idle' && small ? (tiltOn ? 'idleTilt' : 'idleTouch') : msg]}</div>
           <button type="button" className="drop-btn" onClick={play} disabled={busy}>DROP</button>
         </div>
         <div className="cabinet-foot">
@@ -306,10 +341,24 @@ export default function ClawMachine() {
 
 const INK = (c) => (c === '#ffc531' || c === '#a9b6ff' || c === '#ff8a6b' ? '#141312' : '#f2ede4')
 
+// On the small (phone) machine "Graduated" does not fit a capsule, so it shows a graduation cap
+const GRAD_CAP = (
+  <svg className="sticker-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 4 1.5 9 12 14l10.5-5z" fill="currentColor" />
+    <path d="M6 11.5v4c0 1.4 2.7 2.9 6 2.9s6-1.5 6-2.9v-4l-6 2.9z" fill="currentColor" />
+    <path d="M21 9.3v5.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+)
+
 function Capsule({ c, className = '', style }) {
+  const label = c.when.split(' ')[0]
+  const grad = label === 'Graduated'
   return (
     <span className={`capsule ${className}`} style={{ '--c': c.color, ...style }} aria-hidden="true">
-      <span className="capsule-sticker">{c.when.split(' ')[0]}</span>
+      <span className={`capsule-sticker ${grad ? 'is-grad' : ''}`}>
+        <span className="sticker-text">{label}</span>
+        {grad && GRAD_CAP}
+      </span>
     </span>
   )
 }

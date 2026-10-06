@@ -308,12 +308,29 @@ main { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
 .pile { position: absolute; inset: 0; pointer-events: none; }
 .filler { position: absolute; border-radius: 50%; background: linear-gradient(var(--c) 50%, #fffdf3 50%); box-shadow: inset 0 0 0 3px #141312, inset 0 -5px 0 rgb(0 0 0 / .08); }
 .capsule {
-  position: absolute; z-index: 2; width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
+  position: absolute; z-index: 2; width: var(--cap, 62px); height: var(--cap, 62px); border-radius: 50%; display: grid; place-items: center;
   background: linear-gradient(var(--c) 50%, rgb(255 255 255 / .92) 50%);
   box-shadow: inset 0 0 0 3px #141312, inset 0 -7px 0 rgb(0 0 0 / .1), 0 6px 10px rgb(20 19 18 / .2); transform: rotate(var(--tilt));
 }
 .capsule-sticker { padding: 3px 7px; border-radius: 6px; background: #fff; color: #141312; font: 800 11px 'Bricolage Grotesque', sans-serif; box-shadow: 0 0 0 2px #141312; transform: rotate(calc(var(--tilt) * -1)); }
+/* Smaller capsules on phones: labels shrink so long ones like "Graduated" still fit */
+.claw.is-small .capsule-sticker { padding: 2px 4px; font-size: 9px; letter-spacing: -.01em; }
+/* Graduation cap instead of the word "Graduated" on the small machine */
+.sticker-icon { display: none; width: 16px; height: 16px; }
+.claw.is-small .capsule-sticker.is-grad .sticker-text { display: none; }
+.claw.is-small .capsule-sticker.is-grad .sticker-icon { display: block; }
+.claw.is-small .capsule-sticker.is-grad { padding: 2px 3px; }
+/* Phones with a motion sensor steer by tilting: the joystick comes back and leans with the phone */
+.claw.has-tilt .panel { grid-template-columns: 50px 1fr auto; gap: 12px; }
+.claw.has-tilt .joystick { display: grid; width: 48px; height: 48px; pointer-events: none; }
+.claw.has-tilt .screen { font-size: 18px; }
+/* A small prize hole on phones, so the capsules get the room */
+.claw.is-small .claw-chute { height: 70px; border-radius: 10px 10px 0 0; padding-bottom: 8px; }
+.claw.is-small .claw-chute span { font-size: 7px; letter-spacing: .08em; }
 .capsule.in-claw { position: absolute; left: -14px; top: 34px; --tilt: 0deg; }
+/* Released over the prize hole: drops straight down and disappears behind the hole's front */
+.capsule.falling { z-index: 1; --tilt: 0deg; animation: fall-in var(--fall, 650ms) cubic-bezier(.45, 0, .9, .5) forwards; }
+@keyframes fall-in { to { transform: translateY(var(--drop)) rotate(40deg); } }
 .capsule.wobble { animation: slip .7s ease; }
 @keyframes slip { 30% { transform: translateY(-50px) rotate(var(--tilt)); } 60% { transform: translateY(-32px) rotate(calc(var(--tilt) + 16deg)); } 100% { transform: rotate(var(--tilt)); } }
 .claw-chute { position: absolute; bottom: 0; width: 82px; height: 120px; z-index: 2; border-radius: 12px 12px 0 0; background: #141312; display: grid; place-items: end center; padding-bottom: 12px; box-shadow: inset 0 10px 0 rgb(255 255 255 / .06); }
@@ -479,7 +496,16 @@ a.channel:hover { transform: translateX(6px); }
   .links { display: none; }
   .pill { margin-left: auto; }
   .notes-wall { grid-template-columns: 1fr; }
-  .claw-glass { height: 320px; }
+  .claw-glass { height: 250px; }
+  .claw-cord.down { height: 128px; }
+  .claw-chute { height: 84px; padding-bottom: 8px; }
+  .claw-chute span { font-size: 9px; letter-spacing: .12em; }
+  .claw.is-small .capsule-sticker { font-size: 10px; padding: 2px 5px; }
+  .marquee-text { font-size: 18px; letter-spacing: .24em; }
+  .screen { font-size: 19px; }
+  .drop-btn { width: 66px; height: 66px; font-size: 14px; }
+  .ticket-body { min-height: 72px; }
+  .ticket-empty { font-size: 22px; }
   .panel { grid-template-columns: 1fr auto; }
   .joystick { display: none; }
   .section { padding-top: 100px; }

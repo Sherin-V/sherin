@@ -6,7 +6,7 @@ import { useTheme } from './theme.js'
 // Tapping one writes a sticky note and draws a hand-drawn arrow from it to that spot.
 // x/y are percentages of the photo.
 const SPOTS = [
-  { x: 50, y: 22, title: 'the human', text: 'Sherin, developer in Berlin. Coding since 17 and still smiling about it.' },
+  { x: 57, y: 52, title: 'the human', text: 'Sherin, developer in Berlin. Coding since 17 and still smiling about it.' },
   { x: 78, y: 68, title: 'the laptop', text: 'Where ideas turn into real web apps. My toolbox:', skills: true },
   { x: 12, y: 86, title: 'the books', text: "Master's in computer science at IU: done! Now building software at Macrix." },
   { x: 10, y: 24, title: 'the notes', text: 'Ideas waiting to be built. Got one? Channel 05 is open.' },
