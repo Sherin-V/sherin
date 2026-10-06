@@ -7,13 +7,44 @@ export const socials = [
 
 export const skills = ['React', 'JavaScript', 'HTML & CSS', 'Java', 'SQL', 'Firebase', 'UI/UX design']
 
-// Projects shown as game cartridges. PLACEHOLDERS: replace with real projects.
-// image: a screenshot in public/assets (e.g. '/assets/project-a.png'), or null for "coming soon".
-// live / code: full URLs, or '' to hide that button.
+// Projects shown as game cartridges.
+// image: a screenshot in public/assets, or null for "coming soon".
+// live / code: full URLs, or '' to hide that button. liveLabel: what A opens, when it is not a website.
+// icon: the site's own icon, shown in front of the live link.
+const asset = (file) => `${import.meta.env.BASE_URL}assets/${file}`
+
 export const projects = [
-  { title: 'Project A', color: '#ff5a36', blurb: 'One line about what it is and who it was for.', tech: ['React', 'Firebase'], image: null, live: '', code: '' },
-  { title: 'Project B', color: '#3d5afe', blurb: 'One line about what it is and who it was for.', tech: ['HTML', 'CSS', 'JavaScript'], image: null, live: '', code: '' },
-  { title: 'Project C', color: '#ffc531', blurb: 'One line about what it is and who it was for.', tech: ['Java', 'SQL'], image: null, live: '', code: '' },
+  {
+    title: 'Nex',
+    color: '#3d5afe',
+    blurb: 'My own Node.js framework, on npm as sv-nex: databases, HTTP and sockets, email, uploads and sessions behind one simple setup.',
+    tech: ['Node.js', 'Express', 'MySQL', 'npm'],
+    image: asset('project-nex.jpg'),
+    live: 'https://www.npmjs.com/package/sv-nex',
+    liveLabel: 'NPM PACKAGE', // a package, not a website
+    icon: asset('icon-npm.svg'),
+    code: 'https://github.com/Red-Blue-co/Nex',
+  },
+  {
+    title: 'QODE',
+    color: '#ff5a36',
+    blurb: 'A round code I designed from scratch: hexagon dots with three states, read live by your phone camera right in the browser.',
+    tech: ['JavaScript', 'Node.js', 'Canvas', 'Web Workers'],
+    image: asset('project-qode.jpg'),
+    live: 'https://qode.sherin.fun',
+    icon: asset('icon-qode.svg'),
+    code: 'https://github.com/Red-Blue-co/qode',
+  },
+  {
+    title: 'Red-Blue',
+    color: '#ffc531',
+    blurb: 'A full-stack app with sign-in, email codes and products, built on Nex and running on my own cloud server.',
+    tech: ['React', 'Express', 'MySQL', 'Nex'],
+    image: asset('project-red-blue.jpg'),
+    live: 'https://app.sherin.fun',
+    icon: asset('icon-red-blue.svg'),
+    code: 'https://github.com/Red-Blue-co/Red-Blue',
+  },
 ]
 
 // Services as sticky notes: `note` is the paper colour, `tags` the handwritten line at the bottom
