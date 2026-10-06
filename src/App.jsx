@@ -7,6 +7,7 @@ import WalkieContact from './WalkieContact.jsx'
 import ProjectConsole from './ProjectConsole.jsx'
 import { setTheme, TONES, useTheme } from './theme.js'
 import DeskTour from './DeskTour.jsx'
+import CvPrinter from './CvPrinter.jsx'
 
 const BlocksScene = lazy(() => import('./BlocksScene.jsx'))
 
@@ -329,7 +330,7 @@ function Hero() {
         </motion.p>
         <motion.div className="cta" {...up(1.55)}>
           <a className="btn primary" href="#contact">Start a project</a>
-          <a className="btn line-btn" href={`${import.meta.env.BASE_URL}assets/SherinV.pdf`} target="_blank" rel="noopener">CV ↓</a>
+          <CvPrinter className="btn line-btn">CV ↓</CvPrinter>
         </motion.div>
       </div>
     </section>

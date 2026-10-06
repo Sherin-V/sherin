@@ -516,3 +516,39 @@ a.channel:hover { transform: translateX(6px); }
       .lede { font-size: 18px; }
   .note-ink { display: none; }
 }
+
+/* CV printer: the hero's CV button opens a toy printer that prints the CV out of its slot */
+.cvp-dim { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px 16px; background: rgb(20 19 18 / .55); backdrop-filter: blur(4px); animation: cvp-fade .25s ease; }
+@keyframes cvp-fade { from { opacity: 0; } }
+.cvp-box { --paper-h: max(240px, calc(100dvh - 300px)); position: relative; width: min(860px, 100%); display: flex; flex-direction: column; align-items: center; animation: cvp-pop .4s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes cvp-pop { from { transform: scale(.9) translateY(20px); } }
+.cvp-close { position: absolute; right: -6px; top: -6px; z-index: 5; width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; background: #fffdf3; color: #141312; font: 800 18px Inter, sans-serif; box-shadow: 0 0 0 3px #141312; }
+.cvp-printer { position: relative; z-index: 3; width: 100%; height: clamp(120px, 16vh, 160px); border-radius: 30px 30px 18px 18px; background: #3d5afe; box-shadow: 0 0 0 4px #141312, inset 0 -12px 0 rgb(0 0 0 / .2); }
+.cvp-label { position: absolute; left: 26px; top: 22px; font: 800 15px 'Bricolage Grotesque', sans-serif; letter-spacing: .25em; color: #ffc531; }
+.cvp-led { position: absolute; left: 26px; top: 56px; width: 12px; height: 12px; border-radius: 50%; background: #2a2d6e; box-shadow: 0 0 0 2px #141312; }
+.cvp-box.printing .cvp-led { background: #3ddc84; animation: cvp-blink .3s steps(2) infinite; }
+@keyframes cvp-blink { 50% { opacity: .3; } }
+.cvp-print { position: absolute; right: 24px; top: 22px; width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: pointer; background: #ff5a36; color: #fff; font: 800 12px 'Bricolage Grotesque', sans-serif; letter-spacing: .08em; box-shadow: 0 0 0 4px #141312, inset 0 -7px 0 rgb(0 0 0 / .25); transition: transform .1s; }
+.cvp-print:active { transform: translateY(4px); box-shadow: 0 0 0 4px #141312, inset 0 -3px 0 rgb(0 0 0 / .25); }
+.cvp-print:disabled { cursor: default; filter: saturate(.6); }
+.cvp-slot { position: absolute; left: 30px; right: 30px; bottom: 22px; height: 14px; border-radius: 7px; background: #141312; }
+/* The paper is fed out of the slot line by line, then settles */
+.cvp-feed { position: relative; z-index: 2; width: 88%; margin-top: -30px; height: 0; overflow: hidden; }
+.cvp-box.printing .cvp-feed { height: var(--paper-h); transition: height 1.4s steps(14, end); }
+.cvp-box.printed .cvp-feed { height: var(--paper-h); }
+.cvp-paper { position: absolute; left: 0; right: 0; bottom: 0; height: var(--paper-h); overflow-y: auto; overscroll-behavior: contain; background: #fff; border-radius: 0 0 6px 6px; box-shadow: 0 0 0 3px #141312; }
+.cvp-paper img { display: block; width: 100%; height: auto; margin-top: 30px; } /* the top 30px is still inside the printer */
+.cvp-tear { position: absolute; left: 0; right: 0; top: 0; z-index: 2; border-top: 3px dashed #5e584f; }
+.cvp-hint { margin-top: 16px; font: 500 24px Caveat, cursive; color: #fffdf3; }
+.cvp-box.printed .cvp-hint { display: none; }
+.cvp-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 18px; opacity: 0; transform: translateY(10px); transition: opacity .3s .2s, transform .3s .2s; }
+.cvp-box.printed .cvp-actions { opacity: 1; transform: none; }
+.cvp-open { background: #fffdf3; color: #141312; }
+@media (max-width: 600px) {
+  .cvp-box { --paper-h: max(240px, calc(100dvh - 280px)); }
+  .cvp-feed { width: calc(100% - 32px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cvp-box.printing .cvp-feed { transition: none; }
+  .cvp-box, .cvp-dim { animation: none; }
+}
