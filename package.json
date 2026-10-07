@@ -25,5 +25,19 @@
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
     "vite": "^8.3.0"
+  },
+  "description": "The portfolio of Sherin Varghese, software engineer in Berlin",
+  "author": {
+    "name": "Sherin Varghese",
+    "email": "admin@sherin.fun",
+    "url": "https://sherin.fun"
+  },
+  "homepage": "https://sherin.fun",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sherin-V/sherin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sherin-V/sherin/issues"
   }
 }
