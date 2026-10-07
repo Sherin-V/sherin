@@ -12,7 +12,7 @@
 ## Projects
 - [QODE](https://qode.sherin.fun): a round code designed from scratch, hexagon dots with three states, read live by a phone camera in the browser.
 - [Nex (sv-nex)](https://www.npmjs.com/package/sv-nex): a Node.js framework on npm for databases, HTTP and sockets, email, uploads and sessions.
-- [Two Tone (Red-Blue)](https://app.sherin.fun): a full-stack drinks store with sign-in, email codes, a cart and orders, built with React, Express, MySQL and Nex.
+- [Two Tone](https://app.sherin.fun): a full-stack drinks store with a can-shaped sign-in, 12 drinks by category, a cart, checkout and profiles, built with React, Express, MySQL and Nex.
 - [ISU](https://isu.sherin.fun): a website for a student community run by students.
 
 ## Services

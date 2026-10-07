@@ -35,13 +35,13 @@ export const projects = [
     code: 'https://github.com/Red-Blue-co/qode',
   },
   {
-    title: 'Red-Blue',
-    color: '#ffc531',
-    blurb: 'A full-stack app with sign-in, email codes and products, built on Nex and running on my own cloud server.',
+    title: 'Two Tone',
+    color: '#f2d95c',
+    blurb: 'A drinks store I designed and built end to end: a sign-in form shaped like a can, 12 drinks by category, cart, checkout and profiles. Built on Nex and running on my own cloud server.',
     tech: ['React', 'Express', 'MySQL', 'Nex'],
-    image: asset('project-red-blue.jpg'),
+    image: asset('project-two-tone.jpg'),
     live: 'https://app.sherin.fun',
-    icon: asset('icon-red-blue.svg'),
+    icon: asset('icon-two-tone.svg'),
     code: 'https://github.com/Red-Blue-co/Red-Blue',
   },
 ]
