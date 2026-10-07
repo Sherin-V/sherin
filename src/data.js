@@ -2,7 +2,6 @@ export const socials = [
   { label: 'GitHub', href: 'https://github.com/Sherin-V' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sherin-varghese-04b6831ba/' },
   { label: 'Discord', href: 'https://discord.gg/t7aRDBYREs' },
-  { label: 'Facebook', href: 'https://www.facebook.com/sherin.varghese.121772' },
 ]
 
 export const skills = ['React', 'JavaScript', 'HTML & CSS', 'Java', 'SQL', 'Firebase', 'UI/UX design']
