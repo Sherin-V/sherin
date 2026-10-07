@@ -128,12 +128,16 @@ function walkieMail({ led, top, title, quote, note, footer }) {
   const grille = new Array(16).fill('<span style="display:inline-block;width:6px;height:34px;margin-right:7px;background:' + INK + ';border-radius:3px"></span>').join('')
   const tag = (t) => '<span style="display:inline-block;padding:4px 9px;border-radius:7px;background:' + INK + ';color:#ffc531;' + SANS + 'font-weight:bold;font-size:11px;letter-spacing:2px;vertical-align:middle">' + t + '</span>'
   const bars = [8, 12, 16, 20].map((h) => '<span style="display:inline-block;width:4px;height:' + h + 'px;margin-left:3px;background:' + INK + ';border-radius:1px;vertical-align:bottom"></span>').join('')
-  // The logo is a picture, so phone mail apps in dark mode can't repaint its colours
-  const logo = '<a href="https://sherin.fun" style="text-decoration:none"><img src="https://sherin.fun/mail/logo.png" width="182" height="48" alt="sherin.fun" style="display:inline-block;border:0;width:182px;height:48px"></a>'
+  // The site's logo, with the same styles as .brand / .brand-blocks in src/index.css
+  const BRAND = "font-family:'Bricolage Grotesque',Arial,Helvetica,sans-serif;"
+  const block = (ch, bg, fg) => '<b style="display:inline-block;width:19px;height:23px;margin-left:2px;border-radius:5px;background:' + bg + ';color:' + fg + ';text-align:center;line-height:22px;font-size:15px;font-weight:800;box-shadow:inset 0 -3px 0 rgba(0,0,0,.22);vertical-align:middle;' + BRAND + '">' + ch + '</b>'
+  const logo = '<a href="https://sherin.fun" style="text-decoration:none;white-space:nowrap">' +
+    '<span style="' + BRAND + 'font-weight:700;font-size:18px;color:' + INK + ';vertical-align:middle">sherin<i style="font-style:normal;color:#ff5a36;margin:0 1px">.</i></span>' +
+    block('f', '#ff5a36', '#f2ede4') + block('u', '#ffc531', INK) + block('n', '#3d5afe', '#f2ede4') + '</a>'
   return (
     // Ask mail apps that honour it (Apple Mail, Outlook) to keep the light colours in dark mode
     '<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">' +
-    '<style>:root { color-scheme: light only; supported-color-schemes: light only; }</style>' +
+    '<style>@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&display=swap"); :root { color-scheme: light only; supported-color-schemes: light only; }</style>' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2ede4"><tr><td align="center" style="padding:32px 14px">' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:440px;background:#ffc531;border:4px solid ' + INK + ';border-radius:34px">' +
         '<tr><td style="padding:22px 22px 6px">' +
