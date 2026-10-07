@@ -1,9 +1,9 @@
-# Builds the site and publishes it to GitHub Pages on every push to main
+# Builds the site and publishes it to GitHub Pages on every push to master (sherin.fun) or main (preview)
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [master, main]
   workflow_dispatch:
 
 permissions:
