@@ -309,10 +309,19 @@ function Hero() {
     window.addEventListener('blocks:ready', on)
     return () => window.removeEventListener('blocks:ready', on)
   }, [])
+  // Start the 3D scene once the page itself has loaded, so the text shows first
+  const [show3d, setShow3d] = useState(false)
+  useEffect(() => {
+    let idle
+    const start = () => { idle = (window.requestIdleCallback || setTimeout)(() => setShow3d(true), { timeout: 600 }) }
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
+    return () => { window.removeEventListener('load', start); if (idle) (window.cancelIdleCallback || clearTimeout)(idle) }
+  }, [])
   return (
     <section className="hero" id="top">
       <div className="hero-3d" aria-hidden="true">
-        <Suspense fallback={null}><BlocksScene /></Suspense>
+        {show3d && <Suspense fallback={null}><BlocksScene /></Suspense>}
       </div>
       <p className={`hero-fallback ${ready ? 'gone' : ''}`} aria-hidden="true"><span>SHERIN</span><span>VARGHESE</span></p>
       <h1 className="sr-only">Sherin Varghese — software engineer in Berlin</h1>

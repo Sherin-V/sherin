@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Lightformer, RoundedBox, Text } from '@react-three/drei'
 import RAPIER from '@dimforge/rapier3d-compat'
@@ -221,9 +221,29 @@ function Toybox() {
   )
 }
 
+// Only draw while the hero is on screen and the tab is visible: scrolled past or in a
+// background tab, the scene stops (no rendering, no physics) and picks up where it left off.
+function useOnScreen() {
+  const [box, setBox] = useState(null)
+  const [onScreen, setOnScreen] = useState(true)
+  useEffect(() => {
+    if (!box) return
+    let inView = true
+    const update = () => setOnScreen(inView && document.visibilityState === 'visible')
+    const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; update() })
+    io.observe(box)
+    document.addEventListener('visibilitychange', update)
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', update) }
+  }, [box])
+  return [setBox, onScreen]
+}
+
 export default function BlocksScene() {
+  const [boxRef, onScreen] = useOnScreen()
   return (
+    <div ref={boxRef} style={{ width: '100%', height: '100%' }}>
     <Canvas
+      frameloop={onScreen ? 'always' : 'never'}
       shadows={!isPhone()} // real-time shadows are costly on phones
       dpr={isPhone() ? [1, 1.5] : [1, 1.75]}
       camera={{ position: [0, 0, CAMERA_Z], fov: FOV }}
@@ -245,5 +265,6 @@ export default function BlocksScene() {
         <Lightformer form="rect" intensity={2} position={[6, -1, 2]} scale={[2, 8, 1]} />
       </Environment>
     </Canvas>
+    </div>
   )
 }
