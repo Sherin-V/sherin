@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { clunk, press } from './toySounds.js'
+import { clunk, press, printing } from './toySounds.js'
 
 // The CV as a toy printer: the hero's "CV" button opens it, it prints the CV out of its slot
 // (a picture of page one you can scroll), then offers the real PDF to download or open.
@@ -12,6 +12,7 @@ export default function CvPrinter({ className = '', children }) {
   const [open, setOpen] = useState(false)
   const [phase, setPhase] = useState('idle') // idle | printing | printed
   const timer = useRef(0)
+  const stopSound = useRef(() => {})
   const closeBtn = useRef(null)
   const opener = useRef(null)
 
@@ -22,6 +23,8 @@ export default function CvPrinter({ className = '', children }) {
     // Next frame, so printing again restarts the paper from inside the printer
     requestAnimationFrame(() => {
       setPhase('printing')
+      stopSound.current()
+      stopSound.current = printing(PRINT_MS)
       timer.current = setTimeout(() => setPhase('printed'), PRINT_MS)
     })
   }
@@ -38,6 +41,7 @@ export default function CvPrinter({ className = '', children }) {
 
   const close = () => {
     clearTimeout(timer.current)
+    stopSound.current()
     setOpen(false)
     opener.current?.focus()
   }
@@ -55,7 +59,7 @@ export default function CvPrinter({ className = '', children }) {
     }
   }, [open])
 
-  useEffect(() => () => clearTimeout(timer.current), [])
+  useEffect(() => () => { clearTimeout(timer.current); stopSound.current() }, [])
 
   return (
     <>
