@@ -1,0 +1,22 @@
+# Sherin Varghese
+
+> Sherin Varghese is a junior software engineer at Macrix, based in Berlin, Germany. Sherin builds web apps, databases and websites, cares as much about how a product feels as how it works, and has been coding since 17. MSc Computer Science (IU International University of Applied Sciences), Bachelor of Computer Applications (G. H. Raisoni Institute of Business Management).
+
+## Contact
+- Website: https://sherin.fun
+- Email: admin@sherin.fun
+- GitHub: https://github.com/Sherin-V
+- LinkedIn: https://www.linkedin.com/in/sherin-varghese-04b6831ba/
+- CV (PDF): https://sherin.fun/assets/SherinV.pdf
+
+## Projects
+- [QODE](https://qode.sherin.fun): a round code designed from scratch, hexagon dots with three states, read live by a phone camera in the browser.
+- [Nex (sv-nex)](https://www.npmjs.com/package/sv-nex): a Node.js framework on npm for databases, HTTP and sockets, email, uploads and sessions.
+- [Two Tone (Red-Blue)](https://app.sherin.fun): a full-stack drinks store with sign-in, email codes, a cart and orders, built with React, Express, MySQL and Nex.
+- [ISU](https://isu.sherin.fun): a website for a student community run by students.
+
+## Services
+Web apps, UI/UX design, databases, websites, e-commerce, hosting.
+
+## Skills
+React, JavaScript, HTML and CSS, Java, SQL, Node.js, Express, MySQL, Firebase, Three.js, UI/UX design.

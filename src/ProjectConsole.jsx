@@ -89,7 +89,7 @@ export default function ProjectConsole() {
           {p && !booting && (
             <div className="screen-game" key={loaded}>
               <div className="screen-shot" style={{ '--c': p.color }}>
-                {p.image ? <img src={p.image} alt={`${p.title} screenshot`} draggable="false" /> : <span>screenshot coming soon</span>}
+                {p.image ? <img src={p.image} alt={`${p.title} by Sherin Varghese, screenshot`} draggable="false" /> : <span>screenshot coming soon</span>}
               </div>
               <h3>{p.title}</h3>
               <p>{p.blurb}</p>

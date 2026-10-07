@@ -1,0 +1,14 @@
+/* TEAM */
+Developer and designer: Sherin Varghese
+Role: Junior Software Engineer at Macrix
+Location: Berlin, Germany
+Site: https://sherin.fun
+GitHub: https://github.com/Sherin-V
+LinkedIn: https://www.linkedin.com/in/sherin-varghese-04b6831ba/
+Contact: admin@sherin.fun
+
+/* SITE */
+Last update: 2026/10/07
+Language: English
+Built with: React, Vite, Three.js, React Three Fiber, Rapier, Framer Motion
+Hosted on: GitHub Pages

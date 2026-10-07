@@ -77,7 +77,7 @@ export default function CvPrinter({ className = '', children }) {
             <div className="cvp-feed">
               <div className="cvp-paper">
                 <span className="cvp-tear" aria-hidden="true" />
-                <img src={PREVIEW} alt="Preview of my CV" draggable="false" />
+                <img src={PREVIEW} alt="Preview of the CV of Sherin Varghese" draggable="false" />
               </div>
             </div>
             <p className="cvp-hint">printing a fresh copy…</p>

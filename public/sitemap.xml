@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- sherin.fun: the portfolio of Sherin Varghese. One page, with its sections, images and CV. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- The portfolio -->
+  <url>
+    <loc>https://sherin.fun/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sherin.fun/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sherin.fun/" />
+    <image:image>
+      <image:loc>https://sherin.fun/assets/sherin-desk.jpg</image:loc>
+      <image:title>Sherin Varghese</image:title>
+      <image:caption>Sherin Varghese, junior software engineer in Berlin, smiling at a desk with a laptop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/assets/sv.jpeg</image:loc>
+      <image:title>Sherin Varghese portrait</image:title>
+      <image:caption>Portrait of Sherin Varghese, software developer</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/og-card.jpg</image:loc>
+      <image:title>Sherin Varghese · Junior Software Engineer</image:title>
+      <image:caption>Sherin Varghese portfolio card: web apps, databases and websites with a bit of play in them</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/assets/project-qode.jpg</image:loc>
+      <image:title>QODE by Sherin Varghese</image:title>
+      <image:caption>QODE, a round hexagon code designed by Sherin Varghese and read live by a phone camera in the browser</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/assets/project-nex.jpg</image:loc>
+      <image:title>Nex (sv-nex) by Sherin Varghese</image:title>
+      <image:caption>Nex, a Node.js framework by Sherin Varghese published on npm as sv-nex</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/assets/project-red-blue.jpg</image:loc>
+      <image:title>Two Tone store by Sherin Varghese</image:title>
+      <image:caption>Two Tone (Red-Blue), a full-stack React, Express and MySQL store built by Sherin Varghese</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://sherin.fun/assets/cv-page1.png</image:loc>
+      <image:title>Sherin Varghese CV</image:title>
+      <image:caption>First page of the CV of Sherin Varghese, junior software engineer</image:caption>
+    </image:image>
+  </url>
+
+  <!-- The CV -->
+  <url>
+    <loc>https://sherin.fun/assets/SherinV.pdf</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

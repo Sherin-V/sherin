@@ -315,7 +315,7 @@ function Hero() {
         <Suspense fallback={null}><BlocksScene /></Suspense>
       </div>
       <p className={`hero-fallback ${ready ? 'gone' : ''}`} aria-hidden="true"><span>SHERIN</span><span>VARGHESE</span></p>
-      <h1 className="sr-only">Sherin Varghese — software developer in Berlin</h1>
+      <h1 className="sr-only">Sherin Varghese — software engineer in Berlin</h1>
       <motion.div className="hero-top" {...up(0.2)}>
         <span>Software developer</span>
         <BerlinClock />
@@ -340,11 +340,11 @@ function Hero() {
 function About() {
   return (
     <section className="section about-section" id="about">
-      <Reveal className="kicker">01 — About</Reveal>
+      <Reveal className="kicker">01 — About Sherin Varghese</Reveal>
       <Reveal i={1}>
         <DeskTour>
           <h2 className="title">Coding since 17.<br /><span className="grad">Still having fun.</span></h2>
-          <p className="body">I've finished my master's in computer science and now build software at Macrix — and I care as much about how a product feels as how it works.</p>
+          <p className="body">Hi, I'm Sherin Varghese. I've finished my master's in computer science and now build software at Macrix — and I care as much about how a product feels as how it works.</p>
           <p className="body">Away from the keyboard you'll find me exploring new places, trying new recipes or deep in a good book.</p>
           <div className="links-row">
             {socials.map((s) => <a key={s.label} href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}

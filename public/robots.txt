@@ -1,0 +1,17 @@
+# sherin.fun: Sherin Varghese, software engineer in Berlin
+# Everything is public. The sitemap lists the page, the CV and every image.
+
+User-agent: *
+Allow: /
+
+# AI search and assistants are welcome too
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://sherin.fun/sitemap.xml

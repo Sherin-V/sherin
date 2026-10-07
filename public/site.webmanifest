@@ -1,5 +1,5 @@
 {
-  "name": "Sherin Varghese",
+  "name": "Sherin Varghese \u2014 Software Engineer",
   "short_name": "sherin.fun",
   "icons": [
     {
@@ -18,5 +18,15 @@
   "theme_color": "#f2ede4",
   "background_color": "#f2ede4",
   "display": "standalone",
-  "start_url": "./"
+  "start_url": "/",
+  "id": "/",
+  "description": "The portfolio of Sherin Varghese, software engineer in Berlin: web apps, databases and websites.",
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "categories": [
+    "portfolio",
+    "developer",
+    "productivity"
+  ]
 }
