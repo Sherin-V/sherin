@@ -85,10 +85,10 @@ export default function DeskTour({ children }) {
       </div>
 
       <figure className="desk-photo">
-        <img src={`${import.meta.env.BASE_URL}assets/sherin-desk.jpg`} alt="Sherin Varghese smiling at a desk with a laptop and colourful toy props" draggable="false" />
+        <img src={`${import.meta.env.BASE_URL}assets/sherin-varghese-software-engineer-berlin.jpg`} alt="Sherin Varghese, software engineer in Berlin, smiling at a desk with a laptop and colourful toy props" draggable="false" />
         {/* Same desk at night, faded in over the day photo in the dark theme */}
         {hasNight && (
-          <img className={`desk-night${dark ? ' on' : ''}`} src={`${import.meta.env.BASE_URL}assets/sherin-desk-dark.jpg`} alt="" aria-hidden="true" draggable="false" onError={() => setHasNight(false)} />
+          <img className={`desk-night${dark ? ' on' : ''}`} src={`${import.meta.env.BASE_URL}assets/sherin-varghese-software-engineer-berlin-night.jpg`} alt="" aria-hidden="true" draggable="false" onError={() => setHasNight(false)} />
         )}
         {SPOTS.map((s, i) => (
           <button
