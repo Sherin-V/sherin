@@ -61,32 +61,42 @@ export const journey = [
     when: 'Now',
     title: 'Junior Software Engineer',
     where: 'Macrix',
-    color: '#e2231a', // Macrix red
     text: 'Building software full-time.',
+    // brand: the prize ticket is printed in this place's own style (see BrandTicket in ClawMachine.jsx)
+    brand: 'macrix',
+    color: '#e30b17', // Macrix red
   },
   {
     when: 'Graduated',
     title: 'MSc Computer Science',
     where: 'IU International University of Applied Sciences',
     text: 'Completed. Dual studies, combining university with hands-on work.',
+    brand: 'iu',
+    color: '#edec02', // IU yellow
   },
   {
     when: '2022',
     title: 'Learn the Art of Hacking through Programming',
     where: 'LAHTP online course',
     text: 'Security-focused programming and technical fundamentals.',
+    brand: 'ninja',
+    color: '#f47c20', // Selfmade Ninja orange
   },
   {
     when: '2020 – 2022',
     title: 'Bachelor of Computer Applications',
     where: 'G. H. Raisoni Institute of Business Management',
     text: 'Affiliated to KBC North Maharashtra University, Jalgaon. NAAC grade "A", CGPA 3.09.',
+    brand: 'raisoni',
+    color: '#5b1a8e', // Raisoni purple
   },
   {
     when: 'Ongoing',
-    title: 'Crossroads',
-    where: 'YouTube community',
-    text: 'A small community that helps students grow into their next role.',
+    title: 'Brototype',
+    where: 'Tech community · Kerala, India',
+    text: "One of India's biggest tech communities. 2,400+ students placed in tech jobs.",
+    brand: 'brototype',
+    color: '#0b0b0b', // Brototype black
   },
 ]
 

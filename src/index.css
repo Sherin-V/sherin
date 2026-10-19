@@ -412,9 +412,9 @@ a.channel:hover { transform: translateX(6px); }
   position: relative; margin-top: 44px; padding: 26px 26px 30px; border-radius: 40px 40px 34px 34px;
   background: #ffc531; color: #141312; box-shadow: inset 0 0 0 4px #141312, inset 0 -12px 0 rgb(0 0 0 / .16), 0 24px 44px rgb(20 19 18 / .22);
 }
-.walkie-antenna { position: absolute; right: 64px; top: -58px; width: 16px; height: 66px; border-radius: 8px 8px 0 0; background: #141312; }
-.walkie-antenna::after { content: ''; position: absolute; left: 50%; top: -8px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: #141312; }
-.walkie-knob { position: absolute; left: 54px; top: -20px; width: 44px; height: 26px; border-radius: 10px 10px 0 0; background: #141312; }
+.walkie-antenna { position: absolute; right: 64px; top: -58px; width: 16px; height: 66px; border-radius: 8px 8px 0 0; background: #4a423a; box-shadow: inset 4px 0 0 #6b6157; }
+.walkie-antenna::after { content: ''; position: absolute; left: 50%; top: -8px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: #6b6157; box-shadow: inset -3px -3px 0 #4a423a; }
+.walkie-knob { position: absolute; left: 54px; top: -20px; width: 44px; height: 26px; border-radius: 10px 10px 0 0; background: #4a423a; box-shadow: inset 0 4px 0 #6b6157; }
 .walkie-knob i { position: absolute; left: 50%; top: 5px; width: 4px; height: 12px; margin-left: -2px; background: #ffc531; border-radius: 2px; }
 .walkie-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .walkie-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
@@ -473,6 +473,107 @@ a.channel:hover { transform: translateX(6px); }
 
 .footer { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; padding: 28px 0 40px; display: flex; justify-content: space-between; color: var(--muted); font-size: 14px; border-top: 1px solid var(--glass-line); }
 .footer a { text-decoration: none; }
+
+/* ---------- Journey: prize tickets in each organisation's own style ---------- */
+/* Every brand uses the same layout: period pill + brand line, title, where, text, accent rule,
+   logo top-right. Only colours, type and background details change. */
+.ticket.branded { overflow: hidden; }
+.ticket.branded .ticket-body { position: relative; padding-right: 128px; }
+.ticket.branded .bt-logo { position: absolute; top: 0; right: 0; z-index: 1; pointer-events: none; }
+.ticket.branded .bt-head { position: relative; z-index: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 12px; }
+.ticket.branded .when { margin: 0; }
+/* the period tag is a sherin.fun part: one shape on every ticket, only its colours follow the brand */
+.ticket.branded .bt-head .when { border-radius: 999px; padding: 3px 12px; border: 2px solid var(--tag-line); background: var(--tag-bg); color: var(--tag-ink); font: 600 12px/1.3 Inter, sans-serif; letter-spacing: .02em; text-transform: none; }
+.ticket.branded .bt-kicker { font-size: 11px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; }
+.ticket.branded h3, .ticket.branded .where, .ticket.branded .ticket-text { position: relative; z-index: 1; }
+.ticket.branded h3 { margin-bottom: 6px; }
+.ticket.branded .bt-rule { position: relative; z-index: 1; display: block; height: 3px; margin-top: 14px; border-radius: 3px; }
+.ticket.branded .claw-chip.is-open { outline-color: var(--bt-accent); }
+.ticket.branded .claw-chip:not(.is-won) { border-color: var(--bt-chip, #d8ccb8); }
+.ticket.branded .ticket-tear, .ticket.branded .ticket-row { position: relative; z-index: 2; }
+.bt-block, .bt-frame { pointer-events: none; }
+
+/* Macrix: white, dark top bar, red Ubuntu */
+.brand-macrix { --bt-accent: #e30b17; --bt-chip: #f2a3a7; background: #fff; font-family: Ubuntu, sans-serif; }
+.brand-macrix .ticket-top { color: #757575; border-color: #e6e6e6; }
+.brand-macrix .when { --tag-bg: #e30b17; --tag-ink: #fff; --tag-line: #e30b17; }
+.brand-macrix .bt-kicker { font-family: Ubuntu, sans-serif; color: #757575; }
+.brand-macrix h3 { font: 700 26px/1.15 Ubuntu, sans-serif; color: #e30b17; }
+.brand-macrix .where { font: 500 14px Ubuntu, sans-serif; color: #222; }
+.brand-macrix .ticket-text { font: 400 14px/1.5 Ubuntu, sans-serif; color: #757575; }
+.brand-macrix .bt-rule { background: #e30b17; }
+.bt-macrix { display: block; width: 150px; }
+.bt-block { position: absolute; right: -24px; bottom: -82px; width: 120px; height: 66px; background: #e30b17; }
+.brand-macrix .ticket-tear { border-color: #e6e6e6; }
+
+/* IU: light grey, yellow highlighter title, tilted folder frame */
+.brand-iu { --bt-accent: #1d1d1f; --bt-chip: #b9b9c0; background: #f3f3f5; color: #1d1d1f; font-family: 'Source Sans 3', sans-serif; }
+.brand-iu .ticket-top { color: #59595e; border-color: #c9c9cf; }
+.brand-iu .when { --tag-bg: #edec02; --tag-ink: #1d1d1f; --tag-line: #1d1d1f; }
+.brand-iu .bt-kicker { background: #1d1d1f; color: #fff; font: 700 12px 'Source Sans 3', sans-serif; letter-spacing: .04em; padding: 3px 9px; }
+.brand-iu h3 { font: 900 24px/1.55 'Source Sans 3', sans-serif; text-transform: uppercase; }
+.bt-mark { background: #fffe00; padding: 2px 10px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.brand-iu .where { font: 700 14px 'Source Sans 3', sans-serif; }
+.brand-iu .ticket-text { font: 400 15px/1.45 'Source Sans 3', sans-serif; color: #1d1d1f; }
+.brand-iu .bt-rule { display: none; } /* the folder frame takes its place */
+.bt-iu { display: block; width: 120px; }
+.bt-frame { position: absolute; left: -12px; top: -14px; width: calc(100% + 24px); height: calc(100% + 26px); overflow: visible; z-index: 0; transform: rotate(-1.5deg); }
+.bt-frame polyline { fill: none; stroke: #c9c800; stroke-width: 3.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.brand-iu .ticket-tear { border-color: #c9c9cf; }
+
+/* Selfmade Ninja Academy (LAHTP): black and orange */
+.brand-ninja { --bt-accent: #f47c20; --bt-chip: #6b3a12; color: #fff; font-family: Ubuntu, sans-serif; background: #0b0b0c; }
+.brand-ninja .ticket-top { color: #9a9a9a; border-color: #333; }
+.brand-ninja .when { --tag-bg: transparent; --tag-ink: #f47c20; --tag-line: #f47c20; }
+.brand-ninja .bt-kicker { font-family: Ubuntu, sans-serif; font-weight: 500; color: #fff; }
+.brand-ninja .bt-kicker em { font-style: normal; color: #f47c20; }
+.brand-ninja h3 { font: 700 23px/1.15 Ubuntu, sans-serif; }
+.brand-ninja .where { font: 500 13px Ubuntu, sans-serif; color: #f47c20; }
+.brand-ninja .ticket-text { font: 400 14px/1.5 Ubuntu, sans-serif; color: #bdbdbd; }
+.brand-ninja .bt-rule { background: #f47c20; }
+.brand-ninja .bt-img { width: 96px; }
+.brand-ninja .ticket-tear { border-color: #333; }
+
+/* G. H. Raisoni: purple */
+.brand-raisoni { --bt-accent: #5b1a8e; --bt-chip: #cbb6dd; background: #fff; color: #1f1530; font-family: 'Source Sans 3', sans-serif; }
+.brand-raisoni .ticket-top { color: #5d5470; border-color: #ddd2ea; }
+.brand-raisoni .when { --tag-bg: #5b1a8e; --tag-ink: #fff; --tag-line: #5b1a8e; }
+.brand-raisoni .bt-kicker { font-family: 'Source Sans 3', sans-serif; font-weight: 700; color: #5b1a8e; }
+.brand-raisoni h3 { font: 900 24px/1.15 'Source Sans 3', sans-serif; color: #5b1a8e; }
+.brand-raisoni .where { font: 700 14px 'Source Sans 3', sans-serif; }
+.brand-raisoni .ticket-text { font: 400 14px/1.45 'Source Sans 3', sans-serif; color: #5d5470; }
+.brand-raisoni .bt-rule { background: #5b1a8e; }
+.bt-r { display: block; padding: 12px 14px; border-radius: 12px; background: #5b1a8e; }
+.bt-r img { display: block; width: 92px; }
+.brand-raisoni .ticket-tear { border-color: #ddd2ea; }
+
+/* Brototype: black and white, Avenir-style type, thin red line */
+.brand-brototype { --bt-accent: #e50914; --bt-chip: #555; background: #000; color: #fff; font-family: Avenir, 'Nunito Sans', sans-serif; }
+.brand-brototype .ticket-top { color: #999; border-color: #333; }
+.brand-brototype .when { --tag-bg: #fff; --tag-ink: #000; --tag-line: #fff; }
+.brand-brototype .bt-kicker { font-family: Avenir, 'Nunito Sans', sans-serif; color: #ccc; }
+.brand-brototype h3 { font: 900 28px/1.05 Avenir, 'Nunito Sans', sans-serif; margin: 4px 0 8px; }
+.brand-brototype .where { font: 600 14px Avenir, 'Nunito Sans', sans-serif; color: #ccc; }
+.brand-brototype .ticket-text { font: 400 14px/1.6 Avenir, 'Nunito Sans', sans-serif; color: #aaa; margin-top: 10px; }
+.ticket.branded.brand-brototype .ticket-body { padding-right: 128px; }
+.brand-brototype .bt-head { margin-bottom: 16px; }
+.brand-brototype .bt-rule { margin-top: 18px; }
+.brand-brototype .bt-rule { background: #e50914; }
+.brand-brototype .bt-img { width: 112px; margin-top: 6px; }
+.brand-brototype .ticket-tear { border-color: #333; }
+
+@media (max-width: 600px) {
+  .ticket.branded .ticket-body { padding-right: 96px; }
+  .bt-macrix { width: 84px; }
+  .bt-iu { width: 70px; }
+  .brand-ninja .bt-img { width: 62px; }
+  .brand-brototype .bt-img { width: 76px; }
+  .bt-r { padding: 8px 9px; }
+  .bt-r img { width: 56px; }
+  .brand-macrix h3, .brand-iu h3, .brand-ninja h3, .brand-raisoni h3 { font-size: 20px; }
+  .brand-brototype h3 { font-size: 24px; }
+  .ticket.branded.brand-brototype .ticket-body { padding-right: 90px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; }

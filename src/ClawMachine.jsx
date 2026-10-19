@@ -292,12 +292,14 @@ export default function ClawMachine() {
       </div>
 
       <div className="claw-side">
-        <div className={`ticket ${prize ? 'has-prize' : ''}`}>
+        <div className={`ticket ${prize ? 'has-prize' : ''} ${prize?.brand ? `branded brand-${prize.brand}` : ''}`}>
           <div className="ticket-top">
             <span>{prize ? `PRIZE #${String(prize.num).padStart(2, '0')}` : 'PRIZE TICKET'}</span>
             <span>{won.length}/{capsules.length}</span>
           </div>
-          {prize ? (
+          {prize?.brand ? (
+            <BrandTicket prize={prize} key={prize.i} />
+          ) : prize ? (
             <div className="ticket-body" key={prize.i}>
               <span className="when" style={{ background: prize.color, color: INK(prize.color) }}>{prize.when}</span>
               <h3>{prize.title}</h3>
@@ -349,6 +351,72 @@ const GRAD_CAP = (
     <path d="M21 9.3v5.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
   </svg>
 )
+
+// Prize tickets printed in the style of the place they are about: colours, type and logo from
+// each organisation's own website. The fonts load the first time a ticket is printed.
+const BRAND_FONTS = 'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Source+Sans+3:wght@400;700;900&family=Nunito+Sans:wght@400;600;900&display=swap'
+let brandFontsLoaded = false
+const loadBrandFonts = () => {
+  if (brandFontsLoaded) return
+  brandFontsLoaded = true
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = BRAND_FONTS
+  document.head.appendChild(link)
+}
+const ASSET = `${import.meta.env.BASE_URL}assets/brands/`
+
+const BRAND_PARTS = {
+  macrix: () => ({
+    kicker: 'We code IT happen',
+    logo: <img className="bt-img bt-macrix" src={`${ASSET}macrix.png`} alt="Macrix Technology Group" />,
+    where: 'Macrix Technology Group',
+    bg: <span className="bt-block" />,
+  }),
+  iu: (p) => ({
+    kicker: 'IU International',
+    when: `${p.when} ✓`,
+    title: <span className="bt-mark">{p.title}</span>,
+    logo: <img className="bt-img bt-iu" src={`${ASSET}iu.svg`} alt="IU International University of Applied Sciences" />,
+    // IU's tilted folder frame, drawn around the ticket's content
+    bg: (
+      <svg className="bt-frame" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points="230,14 396,8 400,186 6,196 2,22 70,18 82,34 150,30" />
+      </svg>
+    ),
+  }),
+  ninja: () => ({
+    kicker: <>Selfmade <em>Ninja</em> Academy</>,
+    logo: <img className="bt-img" src={`${ASSET}selfmade-ninja.png`} alt="Selfmade Ninja Academy" />,
+  }),
+  raisoni: () => ({
+    kicker: 'Raisoni Education',
+    logo: <span className="bt-r"><img src={`${ASSET}raisoni.png`} alt="Raisoni Education" /></span>,
+  }),
+  brototype: () => ({
+    kicker: 'Brother you never had',
+    logo: <img className="bt-img" src={`${ASSET}brototype.png`} alt="Brototype" />,
+  }),
+}
+
+function BrandTicket({ prize }) {
+  useEffect(loadBrandFonts, [])
+  const b = BRAND_PARTS[prize.brand](prize)
+  return (
+    <div className="ticket-body">
+      {b.bg}
+      <div className="bt-head">
+        <span className="when">{b.when ?? prize.when}</span>
+        <span className="bt-kicker">{b.kicker}</span>
+      </div>
+      <h3>{b.title ?? prize.title}</h3>
+      <p className="where">{b.where ?? prize.where}</p>
+      <p className="ticket-text">{prize.text}</p>
+      <span className="bt-rule" />
+      <span className="bt-logo">{b.logo}</span>
+    </div>
+  )
+}
 
 function Capsule({ c, className = '', style }) {
   const label = c.when.split(' ')[0]
