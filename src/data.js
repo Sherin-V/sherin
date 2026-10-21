@@ -83,7 +83,7 @@ export const journey = [
     color: '#f47c20', // Selfmade Ninja orange
   },
   {
-    when: '2020 – 2022',
+    when: '2020 to 2022',
     title: 'Bachelor of Computer Applications',
     where: 'G. H. Raisoni Institute of Business Management',
     text: 'Affiliated to KBC North Maharashtra University, Jalgaon. NAAC grade "A", CGPA 3.09.',

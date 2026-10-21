@@ -32,7 +32,7 @@ export default function seoPrerender() {
         </header>
         <main>
           <section id="top">
-            <h1>Sherin Varghese — software engineer in Berlin</h1>
+            <h1>Sherin Varghese, software engineer in Berlin</h1>
             <p>Sherin Varghese builds web apps, databases and websites with a bit of play in them. Junior software engineer at Macrix in Berlin.</p>
             <p><a href="/assets/SherinV.pdf">Download the CV of Sherin Varghese (PDF)</a></p>
           </section>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FORM_URL } from './data.js'
 import { bonk, keyUp, roger, stopStatic } from './radioSounds.js'
+import { press } from './toySounds.js'
 
 // Contact as a toy walkie-talkie: fill in the screen, then press and hold PUSH TO TALK.
 // Hold until the ring fills, let go, and the message goes out. Over and out.
@@ -16,11 +17,20 @@ export default function WalkieContact({ children }) {
   const fieldsRef = useRef(fields)
   fieldsRef.current = fields
 
+  // The knob is a channel dial: each click tunes to the next channel. CH 01 to 03 are the cards
+  // beside the walkie-talkie (the tuned one lights up like on hover); CH 04 is this screen.
+  const wrap = useRef(null)
+  const [ch, setCh] = useState(4)
+  const tune = () => { press(); setCh((c) => (c % 4) + 1) }
+  useEffect(() => {
+    wrap.current?.querySelectorAll('.channel').forEach((el, k) => el.classList.toggle('is-tuned', k === ch - 1))
+  }, [ch])
+
   const set = (k) => (e) => { setFields((f) => ({ ...f, [k]: e.target.value })); setError('') }
 
   const check = () => {
     const f = fieldsRef.current
-    if (!f.names.trim()) return 'NO CALLSIGN — TYPE YOUR NAME'
+    if (!f.names.trim()) return 'NO CALLSIGN: TYPE YOUR NAME'
     if (!okEmail(f.email.trim())) return 'REPLY-TO EMAIL LOOKS WRONG'
     if (!f.message.trim()) return 'NOTHING TO SAY YET'
     return ''
@@ -75,21 +85,23 @@ export default function WalkieContact({ children }) {
   const locked = phase === 'sending' || phase === 'sent'
 
   const status = {
-    idle: error || 'READY · CH 04',
+    idle: error || (ch === 4 ? 'READY · CH 04' : `TUNED TO CH 0${ch}`),
     talking: 'TRANSMITTING…',
     sending: 'KSHHH… SENDING',
     sent: '…OVER AND OUT ✓',
-    failed: 'NO SIGNAL — EMAIL ME DIRECTLY',
-    busy: 'CHANNEL BUSY — TRY AGAIN SOON',
+    failed: 'NO SIGNAL: EMAIL ME DIRECTLY',
+    busy: 'CHANNEL BUSY: TRY AGAIN SOON',
   }[phase]
 
   return (
-    <div className="walkie-wrap">
+    <div className="walkie-wrap" ref={wrap}>
       <div className="walkie-left">{children}</div>
 
       <div className={`walkie ${talking ? 'is-talking' : ''} ${phase === 'sent' ? 'is-sent' : ''}`}>
         <span className="walkie-antenna" aria-hidden="true" />
-        <span className="walkie-knob" aria-hidden="true"><i /></span>
+        <button type="button" className="walkie-knob" onClick={tune} aria-label={`Channel dial, tuned to channel ${ch}. Click for the next channel`}>
+          <i style={{ transform: `rotate(${(ch - 2.5) * 36}deg)` }} />
+        </button>
         <div className="walkie-top">
           <span className={`walkie-led ${talking ? 'on' : ''} ${phase === 'sent' ? 'ok' : ''}`} aria-hidden="true" />
           <span className="walkie-brand">SHERIN · FUN</span>

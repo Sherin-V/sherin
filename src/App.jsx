@@ -324,18 +324,18 @@ function Hero() {
         {show3d && <Suspense fallback={null}><BlocksScene /></Suspense>}
       </div>
       <p className={`hero-fallback ${ready ? 'gone' : ''}`} aria-hidden="true"><span>SHERIN</span><span>VARGHESE</span></p>
-      <h1 className="sr-only">Sherin Varghese — software engineer in Berlin</h1>
+      <h1 className="sr-only">Sherin Varghese, software engineer in Berlin</h1>
       <motion.div className="hero-top" {...up(0.2)}>
         <span>Software developer</span>
         <BerlinClock />
-        <span>Portfolio — 2026</span>
+        <span>Portfolio 2026</span>
       </motion.div>
       <HandNotes />
       <ThrowableSun />
       <div className="hero-stage" aria-hidden="true" />
       <div className="hero-foot">
         <motion.p className="lede" {...up(1.45)}>
-          I build web apps, databases and websites — the useful kind, with a bit of play in them.
+          I build web apps, databases and websites. The useful kind, with a bit of play in them.
         </motion.p>
         <motion.div className="cta" {...up(1.55)}>
           <a className="btn primary" href="#contact">Start a project</a>
@@ -349,11 +349,11 @@ function Hero() {
 function About() {
   return (
     <section className="section about-section" id="about">
-      <Reveal className="kicker">01 — About Sherin Varghese</Reveal>
+      <Reveal className="kicker">01 · About Sherin Varghese</Reveal>
       <Reveal i={1}>
         <DeskTour>
           <h2 className="title">Coding since 17.<br /><span className="grad">Still having fun.</span></h2>
-          <p className="body">Hi, I'm Sherin Varghese. I've finished my master's in computer science and now build software at Macrix — and I care as much about how a product feels as how it works.</p>
+          <p className="body">Hi, I'm Sherin Varghese. I've finished my master's in computer science and now build software at Macrix, and I care as much about how a product feels as how it works.</p>
           <p className="body">Away from the keyboard you'll find me exploring new places, trying new recipes or deep in a good book.</p>
           <div className="links-row">
             {socials.map((s) => <a key={s.label} href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
@@ -372,7 +372,7 @@ const TAG_INK = ['#e2401c', '#3d5afe', '#141312']
 function Projects() {
   return (
     <section className="section" id="projects">
-      <Reveal className="kicker">02 — Projects</Reveal>
+      <Reveal className="kicker">02 · Projects</Reveal>
       <Reveal as="h2" className="title">Things I've <span className="grad">built</span></Reveal>
       <Reveal i={1}><ProjectConsole /></Reveal>
     </section>
@@ -382,7 +382,7 @@ function Projects() {
 function Services() {
   return (
     <section className="section" id="services">
-      <Reveal className="kicker">03 — Services</Reveal>
+      <Reveal className="kicker">03 · Services</Reveal>
       <Reveal as="h2" className="title">What I can build <span className="grad">for you</span></Reveal>
       <ul className="notes-wall">
         {services.map((s, i) => (
@@ -402,7 +402,7 @@ function Services() {
 function Journey() {
   return (
     <section className="section" id="journey">
-      <Reveal className="kicker">04 — Journey</Reveal>
+      <Reveal className="kicker">04 · Journey</Reveal>
       <Reveal as="h2" className="title">The road <span className="grad">so far</span></Reveal>
       <Reveal i={1}><ClawMachine /></Reveal>
     </section>
@@ -412,7 +412,7 @@ function Journey() {
 function Contact() {
   return (
     <section className="section contact" id="contact">
-      <Reveal className="kicker">05 — Contact</Reveal>
+      <Reveal className="kicker">05 · Contact</Reveal>
       <Reveal i={1}>
         <WalkieContact>
           <h2 className="huge">Got an idea?<br /><span className="grad">Let's make it fun.</span></h2>

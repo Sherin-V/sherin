@@ -10,6 +10,7 @@ const CAPSULE = 62
 const CAPSULE_SMALL = 50
 const CHUTE_SMALL = 44
 const NARROW = 440 // glass width below which the small sizes are used
+const CLAW_SPEED = 200 // px per second: the joystick's top speed, and the fastest the claw ever moves
 // Where a capsule hangs in the claw, relative to the claw's x and the top of the glass
 // (arm top 12 + carriage 20 + raised cord 24, then the capsule sits 34 below the claw head)
 const IN_CLAW_X = -31
@@ -27,7 +28,7 @@ const MESSAGES = {
   idleTouch: 'tap a capsule, then DROP',
   idleTilt: 'tilt to aim, then DROP',
   dropping: 'here it goes…',
-  miss: 'oops, you missed it — try again!',
+  miss: 'oops, you missed it! try again!',
   slip: 'oops, it slipped! try again!',
   win: 'got it! ✓ check your ticket',
   done: 'you won them all! 🎉',
@@ -36,7 +37,16 @@ const MESSAGES = {
 export default function ClawMachine() {
   const glass = useRef(null)
   const [width, setWidth] = useState(560)
-  const [clawX, setClawX] = useState(90)
+  const [clawX, setClawX] = useState(90) // where the claw is heading
+  const [armX, setArmX] = useState(90) // where the claw is drawn; it travels toward clawX at CLAW_SPEED
+  const target = useRef(90)
+  target.current = clawX
+  const arm = useRef(90)
+  const arrived = useRef([]) // resolvers waiting for the claw to reach its target
+  const reach = () => new Promise((res) => {
+    if (Math.abs(target.current - arm.current) < 0.5) res()
+    else arrived.current.push(res)
+  })
   const [lean, setLean] = useState(0) // joystick tilt, follows claw movement
   const [drop, setDrop] = useState(false)
   const [closed, setClosed] = useState(false)
@@ -93,11 +103,6 @@ export default function ClawMachine() {
     setLean(Math.sign(nx - clawX) * 18)
     setClawX(nx)
   }
-  useEffect(() => {
-    if (stick.current.held || tilt.active) return
-    const t = setTimeout(() => setLean(0), 220)
-    return () => clearTimeout(t)
-  }, [clawX])
 
   // The joystick: push the ball left or right and the claw slides that way, faster the further
   // you push. Let go and it springs back to the middle.
@@ -146,10 +151,21 @@ export default function ClawMachine() {
       else if (!held && tilt.active && small && !busy) {
         // Phone tilt steers the claw like the joystick: gentle near level, faster when tilted far
         const tx = tilt.x
-        if (tx) setClawX((x) => clamp(x + Math.sign(tx) * Math.pow(Math.abs(tx), 1.6) * 220 * dt))
+        if (tx) setClawX((x) => clamp(x + Math.sign(tx) * Math.pow(Math.abs(tx), 1.6) * CLAW_SPEED * dt))
         const lean = Math.round(tx * 34)
         if (Math.abs(lean - leanShown.current) >= 2) { leanShown.current = lean; setLean(lean) }
       }
+      // The drawn claw travels toward its target, never faster than CLAW_SPEED
+      const gap = target.current - arm.current
+      if (gap) {
+        const step = CLAW_SPEED * dt
+        arm.current = Math.abs(gap) <= step ? target.current : arm.current + Math.sign(gap) * step
+        setArmX(arm.current)
+        if (arm.current === target.current) {
+          if (!held && !tilt.active) setLean(0)
+          arrived.current.splice(0).forEach((res) => res())
+        }
+      } else if (arrived.current.length) arrived.current.splice(0).forEach((res) => res())
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -165,6 +181,7 @@ export default function ClawMachine() {
   const play = async () => {
     if (busy) return
     setBusy(true)
+    await reach() // finish the trip before dropping
     setMsg('dropping')
     setDrop(true)
     await wait(720)
@@ -184,8 +201,10 @@ export default function ClawMachine() {
       await wait(720)
       // Line the hanging capsule's centre up with the middle of the hole
       const overHole = chuteX + chuteW / 2 - IN_CLAW_X - cap / 2
+      target.current = overHole // register the trip now, so reach() waits for the claw to get there
       setClawX(overHole)
-      await wait(650)
+      await reach()
+      await wait(150)
       // The claw opens: the capsule falls from where it hung, down into the prize hole
       setClosed(false)
       setHeld(null)
@@ -240,7 +259,7 @@ export default function ClawMachine() {
           onKeyDown={onKey}
         >
           <div className="claw-rail" />
-          <div className={`claw-arm ${steering || (small && tiltOn && !busy) ? 'steer' : ''}`} style={{ transform: `translateX(${clawX}px)` }}>
+          <div className={`claw-arm ${steering || (small && tiltOn && !busy) ? 'steer' : ''}`} style={{ transform: `translateX(${armX}px)` }}>
             <div className="carriage" />
             <div className={`claw-cord ${drop ? 'down' : ''}`} />
             <div className={`claw-head ${closed ? 'closed' : ''}`}>
@@ -292,25 +311,36 @@ export default function ClawMachine() {
       </div>
 
       <div className="claw-side">
-        <div className={`ticket ${prize ? 'has-prize' : ''} ${prize?.brand ? `branded brand-${prize.brand}` : ''}`}>
+        <div className={`ticket ${prize ? 'has-prize' : ''} ${prize?.brand ? `branded tk-${prize.brand}` : ''}`}>
           <div className="ticket-top">
             <span>{prize ? `PRIZE #${String(prize.num).padStart(2, '0')}` : 'PRIZE TICKET'}</span>
             <span>{won.length}/{capsules.length}</span>
           </div>
-          {prize?.brand ? (
-            <BrandTicket prize={prize} key={prize.i} />
-          ) : prize ? (
-            <div className="ticket-body" key={prize.i}>
-              <span className="when" style={{ background: prize.color, color: INK(prize.color) }}>{prize.when}</span>
-              <h3>{prize.title}</h3>
-              <p className="where">{prize.where}</p>
-              <p className="ticket-text">{prize.text}</p>
+          {/* Every ticket is printed in the same spot and only the chosen one shows, so the ticket
+              keeps the height of its tallest version and never jumps when you switch */}
+          <div className="ticket-stack">
+            <div className={`ticket-layer ${prize ? '' : 'on'}`} aria-hidden={prize ? true : undefined}>
+              <div className="ticket-body">
+                <p className="ticket-empty">Win a capsule to print a chapter of my story here.</p>
+              </div>
             </div>
-          ) : (
-            <div className="ticket-body">
-              <p className="ticket-empty">Win a capsule to print a chapter of my story here.</p>
-            </div>
-          )}
+            {capsules.map((c) => (
+              <div
+                key={c.i}
+                className={`ticket-layer ${c.brand ? `branded brand-${c.brand}` : ''} ${prize?.i === c.i ? 'on' : ''}`}
+                aria-hidden={prize?.i === c.i ? undefined : true}
+              >
+                {c.brand ? <BrandTicket prize={c} /> : (
+                  <div className="ticket-body">
+                    <span className="when" style={{ background: c.color, color: INK(c.color) }}>{c.when}</span>
+                    <h3>{c.title}</h3>
+                    <p className="where">{c.where}</p>
+                    <p className="ticket-text">{c.text}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
           <div className="ticket-tear" aria-hidden="true" />
           <div className="ticket-row">
             {capsules.map((c) => (
@@ -332,7 +362,7 @@ export default function ClawMachine() {
         {showList && (
           <ol className="claw-list">
             {capsules.map((c) => (
-              <li key={c.i}><span className="claw-list-when">{c.when}</span> <b>{c.title}</b> — {c.where}</li>
+              <li key={c.i}><span className="claw-list-when">{c.when}</span> <b>{c.title}</b> · {c.where}</li>
             ))}
           </ol>
         )}
